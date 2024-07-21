@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="61.251" height="23" viewBox="0 0 61.251 23">
+  <g id="Group_14" data-name="Group 14" transform="translate(-207.45 -411.948)">
+    <line id="Line_73" data-name="Line 73" x1="29" transform="translate(207.45 423.396)" fill="none" stroke="#707070" stroke-width="1"/>
+    <line id="Line_74" data-name="Line 74" x1="29" transform="translate(207.45 419.396)" fill="none" stroke="#707070" stroke-width="1"/>
+    <line id="Line_72" data-name="Line 72" x1="20" transform="translate(216.45 427.396)" fill="none" stroke="#707070" stroke-width="1"/>
+    <g id="Group_5" data-name="Group 5" transform="translate(7.701 -198.052)">
+      <path id="Path_41" data-name="Path 41" d="M531.1,683.939l8.444-11.98,3.941,6.914,3.565-4.171,5.629,9.238Z" transform="translate(-293.951 -54.409)" fill="none" stroke="#707070" stroke-width="0.5"/>
+      <g id="Ellipse_14" data-name="Ellipse 14" transform="translate(254 615)" fill="none" stroke="#707070" stroke-width="0.5">
+        <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+        <circle cx="2.5" cy="2.5" r="2.25" fill="none"/>
+      </g>
+      <g id="Rectangle_95" data-name="Rectangle 95" transform="translate(234 610)" fill="none" stroke="#707070" stroke-width="0.5">
+        <rect width="27" height="23" rx="4" stroke="none"/>
+        <rect x="0.25" y="0.25" width="26.5" height="22.5" rx="3.75" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

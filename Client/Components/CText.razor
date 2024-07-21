@@ -1,0 +1,185 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberComp">
+                @if (NumForNumber != 0)
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -43px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"><span style="font: normal normal 600 12pt/20px Segoe UI;">@NumForNumber.ToString().</span></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+                else
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -43px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"> </MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+            </div>
+            <div id="CompDivText" class="ComponentDivClass">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if (TxtString != OneBlock.BlockContent)
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                        else
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="CompTitle">טקסט</span>
+                    </div>
+                    <div style="margin: 1% 4%; display: grid; ">
+                        <label for="Text">
+                            <MudTextField id="Text" T="string" @bind-Value="@OneBlock.BlockContent" Variant="Variant.Outlined" Lines="3" Label="כתבו את הטקסט  הרצוי כאן" Style="height: 70px; font: normal 13px/20px Segoe UI;" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+@code{
+
+    //פרמטר של רשומה שלמה מתוך עמוד עריכה
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    string TxtString;
+
+    //פרמטרים למחיקת הרכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+    //פרמטרים למספור
+    [Parameter]
+    public int NumForNumber { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OneBlock.BlockContent != "")
+        {
+            TxtString = OneBlock.BlockContent;
+        }
+        else
+        {
+            TxtString = "";
+        }
+
+    }
+
+
+    //מחיקה
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+    //עדכון
+    private async Task SaveFunc()
+    {      
+        await Task.Yield();
+        OneBlock.Number = NumForNumber;
+        TxtString = OneBlock.BlockContent;
+        OneBlock.ToContinue = 1;
+        
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(OneBlock.BlockContent) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+
+    //הוספת ומחיקת מיספור
+    private async Task NoneNumber()
+    {
+        await Task.Yield();
+      
+        if (NumForNumber != 0)
+        {
+            NumForNumber = 0;
+        }
+        else
+        {
+            NumForNumber = 1;
+        }
+
+        OneBlock.Number = NumForNumber;
+        SaveFunc();
+        NumChanged.InvokeAsync(NumForNumber);
+    }
+
+}

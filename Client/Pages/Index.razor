@@ -1,0 +1,138 @@
+﻿@page "/"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+@using MudBlazor 
+
+
+<body>
+    <div id="bigDiv">
+        <div style="margin-top: -4%;">
+            <MudTooltip Duration="1000" Text="אודות" Placement="Placement.Top">
+                <img src="Images/i.svg" style="width: 20px; display: inline; margin-right: 200%; cursor: pointer;" @onclick="ToOdot" />
+            </MudTooltip>
+        </div>
+
+        <div style=" width: 50%; display: inline-block; padding: 2%;">
+            <h1 class="H1Index">ברוכים הבאים ל-</h1>
+            <img src="Images/Logo.png" id="logoFront" />
+            <p id="LogoP">מחולל ליצירת תוצרי למידה אינטראקטיביים</p>
+        </div>
+
+        <div style="border-left: 2px dashed #6FCFB6; display: inline-block; height: 28vh; position: absolute; right: 39.5%; margin-right: 10%; min-height: 235px; margin-top: 2%; margin-top: 2%; "></div>
+
+        <div style=" width: 50%; display: inline-block; float: left; padding: 2% 2% 2% 10%;">
+            <div id="H1LineIndex">
+                <h1 class="H1Index">כניסה</h1>
+            </div>
+            <div class="PDivIndex">
+                <label for="UsernameLBL">שם משתמש:</label>
+                <MudTextField id="UsernameLBL" @bind-Value="@X" Variant="Variant.Outlined" Margin="Margin.Dense" Style="font: normal 13px/22px Segoe UI; height: 35px; width: 100%;"></MudTextField>
+            </div>
+            <div class="PDivIndex">
+                <label for="passwordLBL">סיסמא:</label>
+                <MudTextField id="passwordLBL" @bind-Value="Y" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" Style="font: normal 13px/22px Segoe UI; height: 35px; width: 100%;"></MudTextField>
+            </div>
+            <div style="width: 115px; margin-right: auto; margin-left: auto;">
+                @if (X == UserName && Y == Pas)
+                {
+                    <MudButton Variant="Variant.Filled" @onclick="userLogin" Style="background: transparent linear-gradient(111deg, #0DE1F5 0%, #51D9B5 48%, #85D487 100%) 0% 0% no-repeat padding-box; border-radius: 23px; color: #FFFFFF; width: 115px; height: 32px; font: normal normal 600 12pt/31px Segoe UI; margin-top: 5%;">כניסה</MudButton>
+
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Disabled="true" Style="border-radius: 23px; width: 115px; font: normal normal 600 12pt/31px Segoe UI; margin-top: 5%; height: 32px;">כניסה</MudButton>
+                }
+            </div>
+        </div>
+        <div style="display: inline-block; width: 100%; margin-top: 1%; ">
+            <div class="LogoDivDown">
+                <div style="margin-bottom: 5px;">
+                    <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                </div>
+                <div>
+                    <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                    <div class="LineClalitLogo"></div>
+                    <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <p style="text-align: center; letter-spacing: 0px; color: #4CBFD2; font: normal normal 600 16px/35px Segoe UI;">
+            תוצר זה פותח במסגרת פרויקט גמר לתואר ראשון ב
+            <a href="https://www.hit.ac.il/telem/overview" target="_blank" style="color: #4CBFD2; text-decoration: underline;">פקולטה לטכנולוגיות למידה</a>,
+            HIT  |
+            <a href="https://www.hit.ac.il/telem/overview" target="_blank" style="color: #4CBFD2; text-decoration: underline;">למידע נוסף >></a>
+        </p>
+    </div>
+</body>
+
+
+
+
+@code{
+    public string TextValue1 { get; set; }
+    public string TextValue2 { get; set; }
+    bool OK = false;
+
+
+    //משתנים להתחברות
+    string X = "";
+    public string Y { get; set; } = "";
+
+    string UserName = "Admin";
+    string Pas = "Creator1234";
+
+    bool isShow;
+
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+
+
+
+
+
+
+    //פונקציית הסתרת הסיסמא
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    async Task userLogin()
+    {
+        var loginUser = await Http.GetAsync("api/Users/LogeIn" + X + "/" + Y);
+        if (loginUser.IsSuccessStatusCode)
+        {
+            ToAllProjects();
+        }
+    }
+
+
+    private void ToAllProjects()
+    {
+        navigat.NavigateTo("/AllProjects");
+    }
+
+    private void ToOdot()
+    {
+        navigat.NavigateTo("/Odot");
+    }
+
+
+
+
+}

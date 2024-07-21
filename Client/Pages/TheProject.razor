@@ -1,0 +1,831 @@
+﻿@page "/TheProject"
+@page "/TheProject/{Id:int}"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+
+<div class="allFinalPage" style="background-color:@BcColor">
+
+    @*צבע בהיר*@
+    @if (SingleProject.ColorDesign == "light")
+    {
+        @if (beginning == true)
+        {
+            <br /><br /><br /><br /><br />
+            <div class="bigDivBeginning">
+                <h1 class="H1Beginning">@SingleProject.ProjectName</h1>
+                <h2 class="H2Beginning">בתוכנת @SingleProject.SoftwareName</h2>
+                <div class="beginningDivLine"></div>
+                <p class="PIntroduction">@SingleProject.Introduction</p>
+                <div style="width: 15%; margin: 0 auto;">
+                    <input type="button" class="BTNFinalP cursor-pointer" Value="התחל" @onclick="ToContinueFunc" />
+                </div>
+                <div class="LogoDivDown">
+                    <div style="margin-bottom: 5px;">
+                        <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                    </div>
+                    <div>
+                        <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                        <div class="LineClalitLogo"></div>
+                        <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (beginning == false)
+        {
+            <br /><br /><br />
+            <div class="bigDivFinalP">
+                <img id="CreatorLogoFinalP" src="Images/Logo.png" alt="Creator logo" />
+                <div class="SideLineTitleFinalP">
+                    <h1 class="H1FinalP">@SingleProject.ProjectName</h1>
+                    <h2 class="H2FinalP">בתוכנת @SingleProject.SoftwareName</h2>
+                </div>
+                <div style="padding: 0% 5% 1% 5%;">
+                    @{int n = 0;}
+                    @foreach (Block TheBlocks in ListOfBlocks)
+                    {
+                        switch (TheBlocks.BlockType)
+                        {
+                            case "Action":
+                                A = JsonSerializer.Deserialize<ActionBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <p class="TxtFinalP">
+                                            <span style="font-weight: bold;">@A.ActionValue</span>
+                                            <span>@A.ActionText</span>
+                                        </p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalP">
+                                            <span class="NumberSpanFinalP">@n.</span>
+                                        </div>
+                                        <div style="display:inline-block">
+                                            <p class="TxtFinalP">
+                                                <span style="font-weight: bold;">@A.ActionValue</span>
+                                                <span>@A.ActionText</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "Text":
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <p class="TxtFinalP">@TheBlocks.BlockContent</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalP">
+                                            <span class="NumberSpanFinalP">@n.</span>
+                                        </div>
+                                        <div style="display:inline-block">
+                                            <p class="TxtFinalP">@TheBlocks.BlockContent</p>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "Title":
+                                <div class="DivTitle">
+                                    <p class="TxtTitle">@TheBlocks.BlockContent</p>
+                                </div>
+                                break;
+                            case "Subtitle":
+                                <div class="DivSubTitle">
+                                    <p class="TxtSubtitle">@TheBlocks.BlockContent</p>
+                                </div>
+                                break;
+                            case "ActionAndSmallImage":
+                                AIT = JsonSerializer.Deserialize<ActionAndSmallImageBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <span class="TxtFinalP" style="font-weight: bold;">@AIT.ActionAndImg_Value</span>
+                                        <img class="TxtActionAndImg" src="@AIT.ActionAndImg_Img" width="90" style="border: 1.5px solid #414040;" />
+                                        <span class="TxtFinalP">@AIT.ActionAndImg_Text</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalP">
+                                            <span class="NumberSpanFinalP">@n.</span>
+                                        </div>
+                                        <div style="display: contents;">
+                                            <span class="TxtFinalP" style="font-weight: bold;">@AIT.ActionAndImg_Value</span>
+                                            <img class="TxtActionAndImg" src="@AIT.ActionAndImg_Img" width="90" style="border: 1.5px solid #414040;" />
+                                            <span class="TxtFinalP">@AIT.ActionAndImg_Text</span>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "TextAndSmallImage":
+                                TI = JsonSerializer.Deserialize<TextAndSmallImageBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <span class="TxtFinalP">@TI.TxtAndImg_Text</span>
+                                        <img class="TxtAndImg" src="@TI.TxtAndImg_Img" width="90" style="border: 1.5px solid #414040;" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalP">
+                                            <span class="NumberSpanFinalP">@n.</span>
+                                        </div>
+                                        <div style="display: contents;">
+                                            <span class="TxtFinalP">@TI.TxtAndImg_Text</span>
+                                            <img class="TxtAndImg" src="@TI.TxtAndImg_Img" width="90" style="border: 1.5px solid #414040;" />
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "BigImage":
+                                <div class="DivBigImgFinalP">
+                                    <img src="@TheBlocks.BlockContent" class="ImgFinalP" style="border: 1.5px solid #414040;" />
+                                </div>
+                                break;
+                            case "SmallImage":
+                                <div class="DivSmallImgFinalP">
+                                    <img src="@TheBlocks.BlockContent" class="ImgFinalP" style="border: 1.5px solid #414040;" />
+                                </div>
+                                break;
+                            case "Link":
+                                l = JsonSerializer.Deserialize<LinkBlock>(TheBlocks.BlockContent);
+                                <div style="position: relative; margin-top: 3%;">
+                                    <div class="LinkActionDivFinalP">
+                                        <img src="Images/ClickMeIcon.svg" class="ImgFinalP" alt="לחצו על הקישור" />
+                                    </div>
+                                    <div class="LinkDivFinalP">
+                                        <MudIcon Icon="@Icons.Rounded.InsertLink" Size="Size.Medium" Style="margin-left: 1%; vertical-align: middle;"></MudIcon>
+                                        <a class="TxtFinalP" href="@l.LinkURL" style="color: #FB9C23; text-decoration: underline; " target="_blank">@l.LinkText</a>
+                                    </div>
+                                </div>
+                                break;
+                            case "QOneChoice":
+                                QOChoice = JsonSerializer.Deserialize<QOneChoiceBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDiv">
+                                    <p class="TxtFinalP">@QOChoice.OneChoice_Ques</p>
+                                    <p class="QActionFinalP">בחרו את התשובה הנכונה ביותר</p>
+                                    <MudRadioGroup @bind-SelectedOption="@SelectedQOChoiceKey[TheBlocks.ID]">
+                                        @for (int i = 0; i < AllQOChoiceAnsKey[TheBlocks.ID].Count; i++)
+                                                            {
+                                            <div class="QDivAnswer">
+                                                <MudRadio Option="@(i.ToString())" Color="Color.Secondary" Dense="true" Size="Size.Small" style="padding-top: 5px; margin-right: 3%; margin-left: 10px;"></MudRadio>
+                                                <p class="TxtQOneChoiceAnsFinalP">@AllQOChoiceAnsKey[TheBlocks.ID][i]</p>
+                                            </div>
+                                                            }
+                                    </MudRadioGroup>
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <input type="button" class="BTNFinalP cursor-pointer" Value="בדיקה" @onclick="()=> QOnClickFanc(TheBlocks.ID)" />
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    //תשובה נכונה
+                                    if (SelectedQOChoiceKey[TheBlocks.ID] == TrueAnsQOChoiceKey[TheBlocks.ID])
+                                    {
+                                        <div class="DivGreenFeedbackFinalP">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QOChoice.OneChoice_FeedbackTrue</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalP">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QOChoice.OneChoice_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                            case "QManyChoices":
+                                QMChoice = JsonSerializer.Deserialize<QManyChoicesBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDiv">
+                                    <p class="TxtFinalP">@QMChoice.ManyChoices_Ques</p>
+                                    <p class="QActionFinalP">בחרו את התשובות הנכונות</p>
+
+                                    @foreach (string A in CountAnsQMChoiceKey[TheBlocks.ID])
+                                    {
+                                        int i = CountAnsQMChoiceKey[TheBlocks.ID].IndexOf(A);
+                                        <div class="QDivAnswer">
+                                            <MudCheckBox @bind-Checked="@SelectedQMChoiceKey[TheBlocks.ID][i]" Color="Color.Secondary" Dense="true" Size="Size.Small" style="margin-right: 3%; margin-left: 10px;"></MudCheckBox>
+                                            <p class="TxtQMChoiceAnsFinalP">@AllAnsQMChoiceKey[TheBlocks.ID][i]</p>
+                                            <br />
+                                        </div>
+                                    }
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <input type="button" class="BTNFinalP cursor-pointer" Value="בדיקה" @onclick="()=> QOnClickFanc(TheBlocks.ID)" />
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    TFQMChoice[TheBlocks.ID] = true;
+                                    @foreach (string A in CountAnsQMChoiceKey[TheBlocks.ID])
+                                    {
+                                        int i = CountAnsQMChoiceKey[TheBlocks.ID].IndexOf(A);
+
+                                        //אם שתי הרשימות לא זהות (רשימץ התשובות מול רשימת הבחירות) תגרור לתשובה שגויה
+                                        if (SelectedQMChoiceKey[TheBlocks.ID][i] != AllTFAnsQMChoiceKey[TheBlocks.ID][i])
+                                        {
+                                            TFQMChoice[TheBlocks.ID] = false;
+                                        }
+                                    }
+                                    //תשובה נכונה
+                                    if (TFQMChoice[TheBlocks.ID] == true)
+                                    {
+                                        <div class="DivGreenFeedbackFinalP">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QMChoice.ManyChoices_FeedbackTrue</p>
+                                        </div> }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalP">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QMChoice.ManyChoices_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                            case "QTrueOrFalse":
+                                QTF = JsonSerializer.Deserialize<QTrueOrFalseBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDiv">
+                                    <p class="TxtFinalP">@QTF.TrueOrFals_Ques</p>
+                                    <p class="QActionFinalP">בחרו את התשובה הנכונה</p>
+                                    <div class="DivQTFaAnsFinalP">
+                                        <MudRadioGroup @bind-SelectedOption="@SelectedQTFKey[TheBlocks.ID]">
+                                            <div class="DivQTFAnsRFinalP">
+                                                <MudRadio Option="@("Ans1")" Color="Color.Secondary" Dense="true" Size="Size.Small" style="margin: 1.5%;"></MudRadio>
+                                                <p class="TxtQTFAnsFinalP">@AllAnsQTFKey[TheBlocks.ID][0]</p>
+                                            </div>
+                                            <div class="DivQTFAnsLFinalP">
+                                                <MudRadio Option="@("Ans2")" Color="Color.Secondary" Dense="true" Size="Size.Small" style="margin: 1.5%;"></MudRadio>
+                                                <p class="TxtQTFAnsFinalP">@AllAnsQTFKey[TheBlocks.ID][1]</p>
+                                            </div>
+                                        </MudRadioGroup>
+                                    </div>
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <input type="button" class="BTNFinalP cursor-pointer" Value="בדיקה" @onclick="()=> QOnClickFanc(TheBlocks.ID)" />
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    //תשובה נכונה
+                                    if (SelectedQTFKey[TheBlocks.ID] == TrueAnsQTFKey[TheBlocks.ID])
+                                    {
+                                        <div class="DivGreenFeedbackFinalP">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QTF.TrueOrFals_FeedbackTrue</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalP" style="padding: 1.5% 5%;">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIcon">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLine"></div>
+                                            <p class="FeedbackTxt">@QTF.TrueOrFals_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                </div>
+
+                <div class="LogoDivDown">
+                    <div style="margin-bottom: 5px;">
+                        <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                    </div>
+                    <div>
+                        <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                        <div class="LineClalitLogo"></div>
+                        <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+    //צבע כהה
+    else
+    {
+        @if (beginning == true)
+        {
+            <br /><br /><br /><br /><br />
+            <div class="bigDivBeginningDark">
+                <h1 class="H1BeginningDark">@SingleProject.ProjectName</h1>
+                <h2 class="H2BeginningDark">בתוכנת @SingleProject.SoftwareName</h2>
+                <div class="beginningDivLineDark"></div>
+                <p class="PIntroductionDark">@SingleProject.Introduction</p>
+                <div style="width: 15%; margin: 0 auto;">
+                    <MudButton Variant="Variant.Filled" @onclick="ToContinueFunc" Color="Color.Tertiary" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; width: 100%; ">התחל</MudButton>
+                </div>
+                <div class="LogoDivDown">
+                    <div style="margin-bottom: 5px;">
+                        <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                    </div>
+                    <div>
+                        <span class="LogoTxtRightDark">מחלקת הטמעה בדיגיטל</span>
+                        <div class="LineClalitLogo"></div>
+                        <span class="LogoTxtLeftDark">חטיבת מערכות מידה ודיגיטל</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (beginning == false)
+        {<br /><br /><br />
+            <div class="bigDivFinalPDark">
+                <img id="CreatorLogoFinalP" src="Images/Logo.png" alt="Creator logo" />
+                <div class="SideLineTitleFinalPDark">
+                    <h1 class="H1FinalPDark">@SingleProject.ProjectName</h1>
+                    <h2 class="H2FinalPDark">בתוכנת @SingleProject.SoftwareName</h2>
+                </div>
+                <div style="padding: 0% 5% 1% 5%;">
+                    @{int n = 0;}
+                    @foreach (Block TheBlocks in ListOfBlocks)
+                    {
+                        switch (TheBlocks.BlockType)
+                        {
+                            case "Action":
+                                A = JsonSerializer.Deserialize<ActionBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <p class="TxtFinalPDark">
+                                            <span style="font-weight: bold;">@A.ActionValue</span>
+                                            <span>@A.ActionText</span>
+                                        </p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalPDark">
+                                            <span class="NumberSpanFinalPDark">@n.</span>
+                                        </div>
+                                        <div style="display:inline-block">
+                                            <p class="TxtFinalPDark">
+                                                <span style="font-weight: bold;">@A.ActionValue</span>
+                                                <span>@A.ActionText</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "Text":
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <p class="TxtFinalPDark">@TheBlocks.BlockContent</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalPDark">
+                                            <span class="NumberSpanFinalPDark">@n.</span>
+                                        </div>
+                                        <div style="display:inline-block">
+                                            <p class="TxtFinalPDark">@TheBlocks.BlockContent</p>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "Title":
+                                <div class="DivAllDivs">
+                                    <p class="TxtTitleDark">@TheBlocks.BlockContent</p>
+                                </div>
+                                break;
+                            case "Subtitle":
+                                <div class="DivSubTitle">
+                                    <p class="TxtSubtitleDark">@TheBlocks.BlockContent</p>
+                                </div>
+                                break;
+                            case "ActionAndSmallImage":
+                                AIT = JsonSerializer.Deserialize<ActionAndSmallImageBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <span class="TxtFinalPDark" style="font-weight: bold;">@AIT.ActionAndImg_Value</span>
+                                        <img class="TxtActionAndImg" src="@AIT.ActionAndImg_Img" width="90" style="border: 1.5px solid white;" />
+                                        <span class="TxtFinalPDark">@AIT.ActionAndImg_Text</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalPDark">
+                                            <span class="NumberSpanFinalPDark">@n.</span>
+                                        </div>
+                                        <div style="display: contents;">
+                                            <span class="TxtFinalPDark" style="font-weight: bold;">@AIT.ActionAndImg_Value</span>
+                                            <img class="TxtActionAndImg" src="@AIT.ActionAndImg_Img" width="90" style="border: 1.5px solid white;" />
+                                            <span class="TxtFinalPDark">@AIT.ActionAndImg_Text</span>
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "TextAndSmallImage":
+                                TI = JsonSerializer.Deserialize<TextAndSmallImageBlock>(TheBlocks.BlockContent);
+                                if (TheBlocks.Number == 0)
+                                {
+                                    <div class="DivAllDivs">
+                                        <span class="TxtFinalPDark">@TI.TxtAndImg_Text</span>
+                                        <img class="TxtAndImg" src="@TI.TxtAndImg_Img" width="90" style="border: 1.5px solid white;" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    n++;
+                                    <div class="DivAllDivsNum">
+                                        <div class="NumberDivFinalPDark">
+                                            <span class="NumberSpanFinalPDark">@n.</span>
+                                        </div>
+                                        <div style="display: contents;">
+                                            <span class="TxtFinalPDark">@TI.TxtAndImg_Text</span>
+                                            <img class="TxtAndImg" src="@TI.TxtAndImg_Img" width="90" style="border: 1.5px solid white;" />
+                                        </div>
+                                    </div>
+                                }
+                                break;
+                            case "BigImage":
+                                <div class="DivBigImgFinalP">
+                                    <img src="@TheBlocks.BlockContent" class="ImgFinalP" style="border: 1.5px solid white;" />
+                                </div>
+                                break;
+                            case "SmallImage":
+                                <div class="DivSmallImgFinalP">
+                                    <img src="@TheBlocks.BlockContent" class="ImgFinalP" style="border: 1.5px solid white;" />
+                                </div>
+                                break;
+                            case "Link":
+                                l = JsonSerializer.Deserialize<LinkBlock>(TheBlocks.BlockContent);
+                                <div style="position: relative; margin-top: 3%;">
+                                    <div class="LinkActionDivFinalP">
+                                        <img src="Images/ClickMeIconDark.svg" class="ImgFinalP" alt="לחצו על הקישור" />
+                                    </div>
+                                    <div class="LinkDivFinalPDark">
+                                        <MudIcon Icon="@Icons.Rounded.InsertLink" Size="Size.Medium" Style="margin-left: 1%; vertical-align: middle;"></MudIcon>
+                                        <a class="TxtFinalPDark" href="@l.LinkURL" style="color: #D6A05B; text-decoration: underline;" target="_blank">@l.LinkText</a>
+                                    </div>
+                                </div>
+                                break;
+                            case "QOneChoice":
+                                QOChoice = JsonSerializer.Deserialize<QOneChoiceBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDivDark">
+                                    <p class="TxtFinalPDark">@QOChoice.OneChoice_Ques</p>
+                                    <p class="QActionFinalPDark">בחרו את התשובה הנכונה ביותר</p>
+
+                                    <MudRadioGroup @bind-SelectedOption="@SelectedQOChoiceKey[TheBlocks.ID]">
+                                        @for (int i = 0; i < AllQOChoiceAnsKey[TheBlocks.ID].Count; i++)
+                                                            {
+                                            <div class="QDivAnswer">
+                                                <MudRadio Option="@(i.ToString())" Color="Color.Tertiary" Dense="true" Size="Size.Small" style="padding-top: 5px; margin-right: 3%; margin-left: 10px;"></MudRadio>
+                                                <p class="TxtQOneChoiceAnsFinalPDark">@AllQOChoiceAnsKey[TheBlocks.ID][i]</p>
+                                            </div>
+                                                            }
+                                    </MudRadioGroup>
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="()=> QOnClickFanc(TheBlocks.ID)" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; width: 100%;">בדיקה</MudButton>
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    //תשובה נכונה
+                                    if (SelectedQOChoiceKey[TheBlocks.ID] == TrueAnsQOChoiceKey[TheBlocks.ID])
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QOChoice.OneChoice_FeedbackTrue</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QOChoice.OneChoice_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                            case "QManyChoices":
+                                QMChoice = JsonSerializer.Deserialize<QManyChoicesBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDivDark">
+                                    <p class="TxtFinalPDark">@QMChoice.ManyChoices_Ques</p>
+                                    <p class="QActionFinalPDark">בחרו את התשובות הנכונות</p>
+
+                                    @foreach (string A in CountAnsQMChoiceKey[TheBlocks.ID])
+                                    {
+                                        int i = CountAnsQMChoiceKey[TheBlocks.ID].IndexOf(A);
+                                        <div class="QDivAnswer">
+                                            <MudCheckBox @bind-Checked="@SelectedQMChoiceKey[TheBlocks.ID][i]" Color="Color.Tertiary" Dense="true" Size="Size.Small" style="margin-right: 3%; margin-left: 10px;"></MudCheckBox>
+                                            <p class="TxtQMChoiceAnsFinalPDark">@AllAnsQMChoiceKey[TheBlocks.ID][i]</p>
+                                            <br />
+                                        </div>
+                                    }
+
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="()=> QOnClickFanc(TheBlocks.ID)" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; width: 100%;">בדיקה</MudButton>
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    TFQMChoice[TheBlocks.ID] = true;
+                                    @foreach (string A in CountAnsQMChoiceKey[TheBlocks.ID])
+                                    {
+                                        int i = CountAnsQMChoiceKey[TheBlocks.ID].IndexOf(A);
+
+                                        //אם שתי הרשימות לא זהות (רשימת התשובות מול רשימת הבחירות) תגרור לתשובה שגויה
+                                        if (SelectedQMChoiceKey[TheBlocks.ID][i] != AllTFAnsQMChoiceKey[TheBlocks.ID][i])
+                                        {
+                                            TFQMChoice[TheBlocks.ID] = false;
+                                        }
+                                    }
+                                    //תשובה נכונה
+                                    if (TFQMChoice[TheBlocks.ID] == true)
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QMChoice.ManyChoices_FeedbackTrue</p>
+                                        </div> }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QMChoice.ManyChoices_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                            case "QTrueOrFalse":
+                                QTF = JsonSerializer.Deserialize<QTrueOrFalseBlock>(TheBlocks.BlockContent);
+                                <div class="QGreenDivDark">
+                                    <p class="TxtFinalPDark">@QTF.TrueOrFals_Ques</p>
+                                    <p class="QActionFinalPDark">בחרו את התשובה הנכונה</p>
+                                    <div class="DivQTFaAnsFinalP">
+                                        <MudRadioGroup @bind-SelectedOption="@SelectedQTFKey[TheBlocks.ID]">
+                                            <div class="DivQTFAnsRFinalPDark">
+                                                <MudRadio Option="@("Ans1")" Color="Color.Tertiary" Dense="true" Size="Size.Small" style="margin: 1.5%;"></MudRadio>
+                                                <p class="TxtQTFAnsFinalPDark">@AllAnsQTFKey[TheBlocks.ID][0]</p>
+                                            </div>
+                                            <div class="DivQTFAnsLFinalPDark">
+                                                <MudRadio Option="@("Ans2")" Color="Color.Tertiary" Dense="true" Size="Size.Small" style="margin: 1.5%;"></MudRadio>
+                                                <p class="TxtQTFAnsFinalPDark">@AllAnsQTFKey[TheBlocks.ID][1]</p>
+                                            </div>
+                                        </MudRadioGroup>
+                                    </div>
+
+                                    <div style="width: 14%; margin: 0 auto;">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" @onclick="()=> QOnClickFanc(TheBlocks.ID)" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; width: 100%;">בדיקה</MudButton>
+                                    </div>
+                                </div>
+                                @if (qustionAns[TheBlocks.ID] == true)
+                                {
+                                    //תשובה נכונה
+                                    if (SelectedQTFKey[TheBlocks.ID] == TrueAnsQTFKey[TheBlocks.ID])
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/V.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QTF.TrueOrFals_FeedbackTrue</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="DivGreenFeedbackFinalPDark" style="padding: 1.5% 5%;">
+                                            <div class="FeedbackDivIcon">
+                                                <img class="FeedbaackIcon" src="/Images/X.svg" />
+                                                <p class="FeedbackTxtIconDark">תשובה לא נכונה</p>
+                                            </div>
+                                            <div class="FeedbackDivLineDark"></div>
+                                            <p class="FeedbackTxtDark">@QTF.TrueOrFals_FeedbackFalse</p>
+                                        </div>
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                </div>
+
+                <div class="LogoDivDown">
+                    <div style="margin-bottom: 5px;">
+                        <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                    </div>
+                    <div>
+                        <span class="LogoTxtRightDark">מחלקת הטמעה בדיגיטל</span>
+                        <div class="LineClalitLogo"></div>
+                        <span class="LogoTxtRightDark">חטיבת מערכות מידה ודיגיטל</span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    List<Block> ListOfBlocks = new List<Block>();
+    Project SingleProject = new Project();
+
+    bool beginning;
+    string BcColor;
+
+    LinkBlock l = new LinkBlock();
+    ActionBlock A = new ActionBlock();
+    TextAndSmallImageBlock TI = new TextAndSmallImageBlock();
+    ActionAndSmallImageBlock AIT = new ActionAndSmallImageBlock();
+    QOneChoiceBlock QOChoice = new QOneChoiceBlock();
+    QTrueOrFalseBlock QTF = new QTrueOrFalseBlock();
+    QManyChoicesBlock QMChoice = new QManyChoicesBlock();
+
+
+    //---------שאלות---------
+
+    Dictionary<int, bool> qustionAns = new Dictionary<int, bool>();
+
+    //-------שאלות רב ברירה-------
+    //מילון שמחזיק את כל התשובות לפי הבלוק
+    Dictionary<int, List<string>> AllQOChoiceAnsKey = new Dictionary<int, List<string>>();
+    //מילון שמחזיק את התשובה הנכונה לפי הבלוק
+    Dictionary<int, string> TrueAnsQOChoiceKey = new Dictionary<int, string>();
+    //מילון שמחזיק את הבחירות לפי הבלוק
+    Dictionary<int, string> SelectedQOChoiceKey = new Dictionary<int, string>();
+
+    //-------שאלות בחירה מרובה-------
+    //מילון שמחזיק את כל התשובות לפי הבלוק
+    Dictionary<int, List<string>> AllAnsQMChoiceKey = new Dictionary<int, List<string>>();
+    //מילון שמחזיק את כל התשובות נכון\לא נכון לפי הבלוק
+    Dictionary<int, List<bool>> AllTFAnsQMChoiceKey = new Dictionary<int, List<bool>>();
+    //מילון שמחזיק את הבחירות לפי הבלוק
+    Dictionary<int, List<bool>> SelectedQMChoiceKey = new Dictionary<int, List<bool>>();
+    //מילון שמחזיק את הערכים ללולאת פוראיצ לפי הבלוק
+    Dictionary<int, List<string>> CountAnsQMChoiceKey = new Dictionary<int, List<string>>();
+    List<string> CountForechQMChoice = new List<string>() { "0", "1", "2", "3", "4" };
+    //מילון שמחזיק את הערך אם התשובה נכונה או לא
+    Dictionary<int, bool> TFQMChoice = new Dictionary<int, bool>();
+
+
+    //----------שאלת תנכון\לא נכון------------
+    Dictionary<int, string> SelectedQTFKey = new Dictionary<int, string>();
+    Dictionary<int, string> TrueAnsQTFKey = new Dictionary<int, string>();
+    //מילון שמחזיק את תוכן התשובות לפי הבלוק
+    Dictionary<int, List<string>> AllAnsQTFKey = new Dictionary<int, List<string>>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        beginning = true;
+
+        //רשימת בלוקים לפי הפרוייקט בעת טעינת הדף
+        var getResponseList = await Http.GetAsync("api/Blocks/ListPerProject/" + Id);
+        ListOfBlocks = getResponseList.Content.ReadFromJsonAsync<List<Block>>().Result;
+
+        var getResponse = await Http.GetAsync("api/Projects/" + Id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+        }
+
+        if (SingleProject.ColorDesign == "light")
+        {
+            BcColor = "#FFFFFFA6";
+        }
+        else
+        {
+            BcColor = "#494C54";
+        }
+
+
+        //בדיקה כמה שאלות יש
+        foreach (Block TheBlocks in ListOfBlocks)
+        {
+            if (TheBlocks.BlockType == "QOneChoice" || TheBlocks.BlockType == "QManyChoices" || TheBlocks.BlockType == "QTrueOrFalse")
+            {
+                qustionAns.Add(TheBlocks.ID, false);
+
+                if (TheBlocks.BlockType == "QOneChoice" && string.IsNullOrEmpty(TheBlocks.BlockContent) == false)
+                {
+                    QOChoice = JsonSerializer.Deserialize<QOneChoiceBlock>(TheBlocks.BlockContent);
+                    AllQOChoiceAnsKey.Add(TheBlocks.ID, new List<string>());
+                    TrueAnsQOChoiceKey.Add(TheBlocks.ID, QOChoice.OneChoice_TrueAns);
+                    SelectedQOChoiceKey.Add(TheBlocks.ID, string.Empty);
+
+                    for (int i = 0; i < QOChoice.OneChoice_AnsArray.Length; i++)
+                    {
+                        AllQOChoiceAnsKey[TheBlocks.ID].Add(QOChoice.OneChoice_AnsArray[i]);
+                    }
+                }
+
+                if (TheBlocks.BlockType == "QManyChoices")
+                {
+                    QMChoice = JsonSerializer.Deserialize<QManyChoicesBlock>(TheBlocks.BlockContent);
+                    AllAnsQMChoiceKey.Add(TheBlocks.ID, new List<string>());
+                    AllTFAnsQMChoiceKey.Add(TheBlocks.ID, new List<bool>());
+                    SelectedQMChoiceKey.Add(TheBlocks.ID, new List<bool>());
+                    CountAnsQMChoiceKey.Add(TheBlocks.ID, new List<string>());
+                    TFQMChoice.Add(TheBlocks.ID, true);
+
+                    for (int i = 0; i < QMChoice.ManyChoices_AnsArray.Length; i++)
+                    {
+                        AllAnsQMChoiceKey[TheBlocks.ID].Add(QMChoice.ManyChoices_AnsArray[i]);
+                        AllTFAnsQMChoiceKey[TheBlocks.ID].Add(QMChoice.ManyChoices_TrueAnsBool[i]);
+                        SelectedQMChoiceKey[TheBlocks.ID].Add(false);
+                        CountAnsQMChoiceKey[TheBlocks.ID].Add(CountForechQMChoice[i]);
+                    }
+                }
+
+                if (TheBlocks.BlockType == "QTrueOrFalse")
+                {
+                    QTF = JsonSerializer.Deserialize<QTrueOrFalseBlock>(TheBlocks.BlockContent);
+                    TrueAnsQTFKey.Add(TheBlocks.ID, QTF.TrueOrFals_Radio);
+                    SelectedQTFKey.Add(TheBlocks.ID, string.Empty);
+                    AllAnsQTFKey.Add(TheBlocks.ID, new List<string>());
+
+                    AllAnsQTFKey[TheBlocks.ID].Add(QTF.TrueOrFals_True);
+                    AllAnsQTFKey[TheBlocks.ID].Add(QTF.TrueOrFals_False);
+                }
+            }
+        }
+    }
+
+
+    //פונקצייתת המשך
+    private void ToContinueFunc()
+    {
+        beginning = false;
+    }
+
+    //פונקציית משוב
+    void QOnClickFanc(int BlockId)
+    {
+        qustionAns[BlockId] = true;
+    }
+
+
+
+}

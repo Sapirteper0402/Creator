@@ -1,0 +1,167 @@
+﻿@page "/AllProjects"
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+@inject NavigationManager navigat
+
+
+<MudGrid Spacing="0">
+    <MudItem sm="1" md="1" lg="1" xl="1"></MudItem>
+    <MudItem sm="8" md="8" lg="8" xl="8">
+        <div id="H1LineProjerts">
+            <h1>רשימת תוצרים</h1>
+        </div>
+        <div style="display: inline; margin-right: 4%;">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="CreateProject" Style="border-radius: 21px; font: normal normal 600 10pt/20px Segoe UI; color: #FFFFFF;">תוצר למידה חדש</MudButton>
+        </div>
+    </MudItem>
+    <MudItem sm="3" md="3" lg="3" xl="3">
+        <div style="background-color:greenyellow">
+            <img id="Logo" src="Images/Logo.png" alt="Creator logo" />
+        </div>
+    </MudItem>
+
+    @*---------------*@
+
+    <MudItem sm="1" md="1" lg="1" xl="1"></MudItem>
+    <MudItem sm="10" md="10" lg="10" xl="10">
+        <MudSimpleTable Dense="true" Hover="@hover" FixedHeader="@fixedheader" Style="overflow-x: auto; width: 90%; margin: 0 auto; font: normal normal 600 16px/22px Segoe UI; margin-top: 3%; height: 75vh; ">
+            <thead>
+                <tr>
+                    @foreach (var h in headings)
+                    {
+                        <th style="font: normal normal 600 16px/22px Segoe UI;"><b>@h</b></th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (ProjectsList != null)
+                {
+                    @foreach (Project p in ProjectsList)
+                    {
+                        <tr>
+                            <td>@p.ProjectName</td>
+                            <td>
+                                @p.CreationDate.Day/@p.CreationDate.Month/@p.CreationDate.Year
+                            </td>
+                            <td>@p.FullName</td>
+                            <td>@p.SoftwareName</td>
+                            <td><MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" style="border-radius:100%" Size="Size.Small" @onclick="@(() => SelectedProject(p.ID))" /></td>
+                            <td>
+                                <MudIconButton Icon="@Icons.Material.Filled.DeleteOutline" Variant="Variant.Filled" Color="Color.Primary" style="border-radius:100%" Size="Size.Small" OnClick="@(() => OnButtonClicked(p.ID))" />
+
+                                <MudMessageBox @ref="mbox" Title="מחיקה" CancelText="ביטול">
+                                    <MessageContent>
+                                        האם אתם בטוחים שתרצו למחוק את התוצר?
+                                        <p style="font: normal normal 400 16px/30px Segoe UI;">במידה וכן - לחצו על כפתור מחיקה</p>
+                                    </MessageContent>
+                                    <YesButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="@(() => DeleteProject(ThePID))" Style="font: normal normal 600 16px/26px Segoe UI;">מחיקה</MudButton>
+                                    </YesButton>
+                                </MudMessageBox>
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(p.FullName) == false && string.IsNullOrEmpty(p.Introduction) == false && string.IsNullOrEmpty(p.ProjectName) == false && string.IsNullOrEmpty(p.SoftwareName) == false && p.BlockID == 1)
+                                {
+                                    <MudIconButton Icon="@Icons.Rounded.PlayArrow" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" style="border-radius:100%" @onclick="@(() => SelectedToTheProject(p.ID))" /> }
+                                else
+                                {
+                                    <MudTooltip Duration="1000" Text="יש להשלים את את כל חלקי התוצר" Placement="Placement.Top">
+                                        <MudIconButton Icon="@Icons.Rounded.PlayArrow" Variant="Variant.Filled" Disabled="true" Color="Color.Secondary" Size="Size.Small" style="border-radius:100%" @onclick="@(() => SelectedToTheProject(p.ID))" />
+                                    </MudTooltip>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </MudSimpleTable>
+    </MudItem>
+    <MudItem sm="1" md="1" lg="1" xl="1"></MudItem>
+</MudGrid>
+
+
+@code {
+
+    List<Project> ProjectsList;
+    Project SingleProject = new Project();
+
+    private bool hover = true;
+    bool fixedheader = true;
+    string[] headings = { "שם התוצר", "תאריך", "שם המדריך", "שם התוכנה", "עריכה", "מחיקה", "התוצר" };
+    int ThePID;
+
+    List<Block> ListOfBlocks = new List<Block>();
+
+    //הודעת מחיקת פרוייקט
+    MudMessageBox mbox { get; set; }
+
+    private async void OnButtonClicked(int FuncPID)
+    {
+        ThePID = FuncPID;
+        bool? result = await mbox.Show();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getResponse = await Http.GetAsync("api/Projects");
+        ProjectsList = getResponse.Content.ReadFromJsonAsync<List<Project>>().Result;
+        ProjectsList.Reverse();
+    }
+
+
+    //הוספה
+    private async Task CreateProject()
+    {
+        var postResponse = await Http.PostAsJsonAsync("api/Projects/Insert", SingleProject);
+        if (postResponse.IsSuccessStatusCode == true)
+        {
+            Project createdProject = postResponse.Content.ReadFromJsonAsync<Project>().Result;
+            ProjectsList.Add(createdProject);
+            SingleProject = new Project();
+
+            navigat.NavigateTo("/Settings/" + createdProject.ID);
+        }
+    }
+
+    //מעבר לעריכת הפרוייקט
+    async Task SelectedProject(int id)
+    {
+        var getResponse = await Http.GetAsync("api/Projects/" + id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+
+            navigat.NavigateTo("/Settings/" + SingleProject.ID);
+        }
+    }
+
+
+    //מחיקה
+    private async Task DeleteProject(int id)
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Projects/" + id);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            ProjectsList.RemoveAll(p => p.ID == id);
+            SingleProject = new Project();
+        }
+    }
+
+
+    //מעבר לעמוד התוצר
+    async Task SelectedToTheProject(int id)
+    {
+        var getResponse = await Http.GetAsync("api/Projects/" + id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+
+            navigat.NavigateTo("/TheProject/" + SingleProject.ID);
+        }
+    }
+
+
+}

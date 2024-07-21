@@ -1,0 +1,212 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberComp">
+                @if (NumForNumber != 0)
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -15px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"><span style="font: normal normal 600 12pt/20px Segoe UI;">@NumForNumber.ToString().</span></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+                else
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -15px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"> </MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+            </div>
+            <div id="CompDivAction">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if (TxtString != B.ActionText || selected != B.ActionValue)
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                        else
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="CompTitle">פעולה</span>
+                        <span class="CompDescription">בחרו את הפעולה הרצויה והמשיכו את המשפט בתיבת הטקסט</span>
+                    </div>
+                    <div style="margin: 1% 4%; display: flex;">
+                        <div style="width: 35%; margin-left: 3%;">
+                            <MudSelect T="string" Dense="true" Label="בחרו פעולה" @bind-Value="@B.ActionValue" Margin="Margin.Dense" style="font: normal 13px/22px Segoe UI;" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                                <MudSelectItem Value="@("לחצו")" />
+                                <MudSelectItem Value="@("בחרו")" />
+                                <MudSelectItem Value="@("הקלידו")" />
+                                <MudSelectItem Value="@("גררו")" />
+                                <MudSelectItem Value="@("סמנו")" />
+                            </MudSelect>
+                        </div>
+                        <MudTextField @bind-Value="B.ActionText" Margin="Margin.Dense" style="width: 100%; font: normal 13px/22px Segoe UI; height: 37px; display: inline-block;" Label="כתבו את המשך המשפט כאן" Variant="Variant.Outlined" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+
+    ActionBlock B = new ActionBlock();
+
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    string TxtString;
+    string selected;
+
+    //פרמטרים למחיקת הרכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+    //פרמטרים למספור
+    [Parameter]
+    public int NumForNumber { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumChanged { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<ActionBlock>(OneBlock.BlockContent);
+            selected = B.ActionValue;
+            TxtString = B.ActionText;
+        }
+    }
+
+    //מחיקה
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+
+        //איפוס המחלקה
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<ActionBlock>(OneBlock.BlockContent);
+            selected = B.ActionValue;
+            TxtString = B.ActionText;
+        }
+
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+    //הוספת ומחיקת מיספור
+    private async Task NoneNumber()
+    {
+        await Task.Yield();
+
+        if (NumForNumber != 0)
+        {
+            NumForNumber = 0;
+        }
+        else
+        {
+            NumForNumber = 1;
+        }
+
+        OneBlock.Number = NumForNumber;
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+        SaveFunc();
+        NumChanged.InvokeAsync(NumForNumber);
+    }
+
+
+    //עדכון
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        OneBlock.Number = NumForNumber;
+
+        selected = B.ActionValue;
+        TxtString = B.ActionText;
+
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+        if (string.IsNullOrEmpty(selected) == false && string.IsNullOrEmpty(TxtString) == false)
+        {
+            OneBlock.ToContinue = 1;
+        }
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(selected) == false && string.IsNullOrEmpty(TxtString) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+}

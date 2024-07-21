@@ -1,0 +1,150 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Client\\FinalProject_SapirTeper_OfirEinhoren.Client.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Client\\FinalProject_SapirTeper_OfirEinhoren.Client.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Client\\FinalProject_SapirTeper_OfirEinhoren.Client.csproj",
+        "projectName": "FinalProject_SapirTeper_OfirEinhoren.Client",
+        "projectPath": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Client\\FinalProject_SapirTeper_OfirEinhoren.Client.csproj",
+        "packagesPath": "C:\\Users\\sapir\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Client\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\sapir\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\FinalProject_SapirTeper_OfirEinhoren.Shared.csproj": {
+                "projectPath": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\FinalProject_SapirTeper_OfirEinhoren.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[5.0.13, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.13, )"
+            },
+            "MudBlazor": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            },
+            "System.Net.Http.Json": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "browser-wasm": {
+          "#import": []
+        }
+      }
+    },
+    "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\FinalProject_SapirTeper_OfirEinhoren.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\FinalProject_SapirTeper_OfirEinhoren.Shared.csproj",
+        "projectName": "FinalProject_SapirTeper_OfirEinhoren.Shared",
+        "projectPath": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\FinalProject_SapirTeper_OfirEinhoren.Shared.csproj",
+        "packagesPath": "C:\\Users\\sapir\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sapir\\OneDrive\\שולחן העבודה\\לימודים HIT\\תואר ראשון\\שנה ג\\פרוייקט גמר\\FinalProject\\קובץ הפרוייקט הסופי - ניתן להרצה\\FinalProject_SapirTeper_OfirEinhoren\\Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\sapir\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

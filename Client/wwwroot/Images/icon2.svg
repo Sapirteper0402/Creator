@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="32" viewBox="0 0 56 32">
+  <g id="Group_22" data-name="Group 22" transform="translate(-93 -791.013)">
+    <g id="Ellipse_12" data-name="Ellipse 12" transform="translate(138 811)" fill="none" stroke="#3a3a3a" stroke-width="0.5">
+      <circle cx="5.5" cy="5.5" r="5.5" stroke="none"/>
+      <circle cx="5.5" cy="5.5" r="5.25" fill="none"/>
+    </g>
+    <g id="Group_1" data-name="Group 1" transform="translate(-9 7)">
+      <g id="Ellipse_10" data-name="Ellipse 10" transform="translate(109 804)" fill="none" stroke="#3a3a3a" stroke-width="0.5">
+        <circle cx="5.5" cy="5.5" r="5.5" stroke="none"/>
+        <circle cx="5.5" cy="5.5" r="5.25" fill="none"/>
+      </g>
+      <g id="Ellipse_11" data-name="Ellipse 11" transform="translate(111 806)" fill="#3a3a3a" stroke="#3a3a3a" stroke-width="0.5">
+        <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
+        <circle cx="3.5" cy="3.5" r="3.25" fill="none"/>
+      </g>
+    </g>
+    <line id="Line_59" data-name="Line 59" y2="32" transform="translate(124.435 791.013)" fill="none" stroke="#707070" stroke-width="0.5"/>
+    <text id="נכון" transform="translate(143 801)" fill="#3a3a3a" font-size="8" font-family="SegoeUI, Segoe UI"><tspan x="-5.922" y="0">נכון</tspan></text>
+    <text id="לא_נכון" data-name="לא נכון" transform="translate(105 801)" fill="#3a3a3a" font-size="8" font-family="SegoeUI, Segoe UI"><tspan x="-11.768" y="0">לא נכון</tspan></text>
+  </g>
+</svg>

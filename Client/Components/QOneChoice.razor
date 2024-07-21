@@ -1,0 +1,361 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberCompNone"></div>
+            <div class="ComponentDivClass">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @{CountPossibleAns();}
+                        @if (M != 0 || possibleAnswers.Count != B.OneChoice_AnsArray.Length || TxtString[0] != B.OneChoice_Ques || TxtString[2] != B.OneChoice_FeedbackTrue || TxtString[3] != B.OneChoice_FeedbackFalse || SelectedValue != B.OneChoice_TrueAns)
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                        else
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle" style="width:90%">
+                        <span class="CompTitle">שאלת חד ברירה</span>
+                        <span class="QCompSubTitle">תוכן השאלה</span>
+                        <MudTextField id="txtQuesManyChoices" @bind-Value="B.OneChoice_Ques" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 37px; margin-bottom: 2%;" Label="הטקסט הרצוי לתוכן השאלה" Variant="Variant.Outlined" />
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="QCompSubTitle" style="margin-bottom: 0%;">אפשרויות מענה</span>
+                        <span class="QCompDescription">הזינו את תוכן התשובות ובחרו את התשובה הנכונה</span>
+
+                        <MudRadioGroup @bind-SelectedOption="@SelectedValue">
+
+                            @foreach (string A in AList)
+                            {
+                                int i = AList.IndexOf(A);
+                                <div style="display: inline-flex; width: 65%; margin: 0.6% 0%; ">
+                                    <MudRadio Option="@(i.ToString())" Color="Color.Secondary" Dense="true" Size="Size.Small" style="padding-top: 8px; display: inline-block; margin-right: 3%; margin-left: 15px;"></MudRadio>
+                                    <MudTextField id="@i.ToString()" @bind-Value="@possibleAnswers[i]" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 33px; padding: 6.5px 10px;" Label="@ListplaceHolder[i]" Variant="Variant.Outlined" />
+
+                                    @if (possibleAnswers.Count > 2)
+                                    {
+                                        <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="() => DeleteAnswerFunc(i)" aria-label="delete" Style=" margin-right: 7px;"></MudIconButton>
+                                    }
+                                    else
+                                    {
+                                        <MudIconButton Icon="@Icons.Rounded.Close" Disabled="true" Size="Size.Medium" Style="padding-top: 1%; padding-right: 2%; padding-left: 1%;"></MudIconButton>
+                                    }
+                                </div>
+                            }
+                        </MudRadioGroup>
+                        @if (possibleAnswers.Count < 5)
+                        {
+                            <MudButton StartIcon="@Icons.Outlined.Add" Color="Color.Secondary" OnClick="AddAnswerFunc" Style="font: normal normal 600 13px/10px Segoe UI; margin: 5px 10px; margin-right: 2%;">לחצו להוספת תשובה</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" Disabled="true" StartIcon="@Icons.Outlined.Add" Style="font: normal normal 600 13px/10px Segoe UI; margin: 5px 10px; margin-right: 2%;">לחצו להוספת תשובה</MudButton>
+                        }
+                    </div>
+                    <div class="GreenDiv">
+                        <span class="QCompFeedbackSubTitle">משוב</span>
+                        <span class="QCompFeedbackDescription">ניתן לשנות את תוכן המשוב</span><br />
+                        <div style="width: 90%; margin: 0 auto;">
+                            <div class="TrueDivFeedback">
+                                <div>
+                                    <MudIcon Icon="@Icons.Outlined.Check" Style="display: block; margin: 0 auto; padding-bottom: 0px; padding-top: 0px;"></MudIcon>
+                                    <span class="FeedbackTitle">תשובה נכונה</span>
+                                </div>
+                                <MudTextField id="trueFeedback" @bind-Value="B.OneChoice_FeedbackTrue" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 35px;" Variant="Variant.Outlined" />
+                            </div>
+                            <div class="QCompFeedbackLine"></div>
+                            <div class="FalseDivFeedback">
+                                <div>
+                                    <MudIcon Icon="@Icons.Outlined.Close" Style="display: block; margin: 0 auto; padding-bottom: 0px; padding-top: 0px;"></MudIcon>
+                                    <span class="FeedbackTitle">תשובה לא נכונה</span>
+                                </div>
+                                <MudTextField id="FalseFeedback" @bind-Value="B.OneChoice_FeedbackFalse" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 35px;" Variant="Variant.Outlined" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+
+    QOneChoiceBlock B = new QOneChoiceBlock();
+
+    int y = 0;
+    int X = 0;
+
+    //פרמטר של רשומה שלמה מתוך עמוד עריכה
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    public string SelectedValue { get; set; } = "0";
+
+    //רשימה לתשובות האפשרויות
+    List<string> possibleAnswers = new List<string>();
+
+    //רשימה לפלייסהולדר
+    List<string> ListplaceHolder = new List<string>() { "תשובה ראשונה", "תשובה שניה", "תשובה שלישית", "תשובה רביעית", "תשובה חמישית" };
+
+    //רשימה שהפוראיצ ירוץ עליה ותהיה באורך רשימ התשובות
+    List<string> AList = new List<string>();
+
+    //מערך שמכיל את התשובות עד שיומר לרשימה
+    string[] AnsArray = { string.Empty, string.Empty };
+
+
+    //פרמטרים למחיקת רכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+    string[] TxtString = new string[4];
+    int M;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //אם יש תוכן
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<QOneChoiceBlock>(OneBlock.BlockContent);
+            AnsArray = B.OneChoice_AnsArray;
+            SelectedValue = B.OneChoice_TrueAns;
+
+            TxtString[0] = B.OneChoice_Ques;
+            TxtString[1] = B.OneChoice_TrueAns;
+            TxtString[2] = B.OneChoice_FeedbackTrue;
+            TxtString[3] = B.OneChoice_FeedbackFalse;
+        }
+        else
+        {
+            //הזנת ערך דיפולט לתיבות טקסט של פידבק
+            if (B.OneChoice_FeedbackTrue == "" || B.OneChoice_FeedbackTrue == null)
+            {
+                B.OneChoice_FeedbackTrue = "כל הכבוד, תשובה נכונה";
+            }
+            if (B.OneChoice_FeedbackFalse == "" || B.OneChoice_FeedbackFalse == null)
+            {
+                B.OneChoice_FeedbackFalse = "תשובה לא נכונה, נסה שנית";
+            }
+
+            TxtString[0] = "";
+            TxtString[1] = "";
+            TxtString[2] = B.OneChoice_FeedbackTrue;
+            TxtString[3] = B.OneChoice_FeedbackFalse;
+
+            B.OneChoice_AnsArray = AnsArray;
+        }
+
+        possibleAnswers = AnsArray.ToList();
+
+        //רשימה עם תוכן באורך של רשימ תכמות התשובות
+        //נועדה בשביל לרוץ עליה בפוראיצ ולמצוא את הפוראיצ
+        for (int Y = 0; Y < possibleAnswers.Count; Y++)
+        {
+            AList.Add(Y.ToString());
+        }
+        X = possibleAnswers.Count;
+    }
+
+
+    //מחיקת רכיב
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+
+
+        //איפוס
+        //אם יש תוכן
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<QOneChoiceBlock>(OneBlock.BlockContent);
+            AnsArray = B.OneChoice_AnsArray;
+            SelectedValue = B.OneChoice_TrueAns;
+
+            TxtString[0] = B.OneChoice_Ques;
+            TxtString[1] = B.OneChoice_TrueAns;
+            TxtString[2] = B.OneChoice_FeedbackTrue;
+            TxtString[3] = B.OneChoice_FeedbackFalse;
+        }
+        else
+        {
+            //הזנת ערך דיפולט לתיבות טקסט של פידבק
+            if (B.OneChoice_FeedbackTrue == "" || B.OneChoice_FeedbackTrue == null)
+            {
+                B.OneChoice_FeedbackTrue = "כל הכבוד, תשובה נכונה";
+            }
+            if (B.OneChoice_FeedbackFalse == "" || B.OneChoice_FeedbackFalse == null)
+            {
+                B.OneChoice_FeedbackFalse = "תשובה לא נכונה, נסה שנית";
+            }
+
+            TxtString[0] = "";
+            TxtString[1] = "";
+            TxtString[2] = B.OneChoice_FeedbackTrue;
+            TxtString[3] = B.OneChoice_FeedbackFalse;
+
+            B.OneChoice_AnsArray = AnsArray;
+        }
+
+        possibleAnswers = AnsArray.ToList();
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+
+    //הוספת תשובה
+    private void AddAnswerFunc()
+    {
+        //mySave = false;
+        AList.Add(AList.Count.ToString());
+        possibleAnswers.Add(string.Empty);
+    }
+
+
+    //מחיקת תשובה
+    private void DeleteAnswerFunc(int i)
+    {
+        possibleAnswers.RemoveAt(i);
+        AList.Clear();
+
+        //רשימה עם תוכן באורך של רשימת כמות התשובות
+        //נועדה בשביל לרוץ עליה בפוראיצ ולמצוא את הפוראיצ
+        for (int Y = 0; Y < possibleAnswers.Count; Y++)
+        {
+            AList.Add(Y.ToString());
+        }
+
+        //במידה והתשובה שנמחקה היא התשובה הבחורה- העברת הרדיו בטן למקום אחר
+        if (SelectedValue == i.ToString())
+        {
+            SelectedValue = "0";
+        }
+
+    }
+
+
+    //שמירת הנתונים
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        B.OneChoice_TrueAns = SelectedValue;
+        B.OneChoice_AnsArray = possibleAnswers.ToArray();
+
+        TxtString[0] = B.OneChoice_Ques;
+        TxtString[1] = B.OneChoice_TrueAns;
+        TxtString[2] = B.OneChoice_FeedbackTrue;
+        TxtString[3] = B.OneChoice_FeedbackFalse;
+
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+        int C = 0;
+        int Z = 0;
+        foreach (string p in possibleAnswers)
+        {
+            if (string.IsNullOrEmpty(p) == true)
+            {
+                C++;
+            }
+        }
+
+        for (int i = 0; i < possibleAnswers.Count; i++)
+        {
+            if (possibleAnswers[i] != B.OneChoice_AnsArray[i])
+            {
+                Z++;
+            }
+        }
+
+        if (Z == 0 && possibleAnswers.Count == B.OneChoice_AnsArray.Length && string.IsNullOrEmpty(SelectedValue) == false && C == 0 && string.IsNullOrEmpty(B.OneChoice_FeedbackFalse) == false && string.IsNullOrEmpty(B.OneChoice_FeedbackTrue) == false && string.IsNullOrEmpty(B.OneChoice_Ques) == false)
+        {
+            OneBlock.ToContinue = 1;
+        }
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (Z == 0 && possibleAnswers.Count == B.OneChoice_AnsArray.Length && string.IsNullOrEmpty(SelectedValue) == false && C == 0 && string.IsNullOrEmpty(B.OneChoice_FeedbackFalse) == false && string.IsNullOrEmpty(B.OneChoice_FeedbackTrue) == false && string.IsNullOrEmpty(B.OneChoice_Ques) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+
+    private async Task CountPossibleAns()
+    {
+        M = 0;
+        for (int i = 0; i < possibleAnswers.Count; i++)
+        {
+            if (possibleAnswers[i] != B.OneChoice_AnsArray[i])
+            {
+                M++;
+            }
+        }
+    }
+
+}
+
+

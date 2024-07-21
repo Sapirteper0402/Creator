@@ -1,0 +1,61 @@
+﻿@page "/Odot"
+@inject NavigationManager navigat
+
+
+<body>
+    <div id="bigDiv" style="margin-top: 0%;">
+        <div Style="float: right; margin-top: -4%; margin-right: 3%;">
+            <MudIconButton Icon="@Icons.Rounded.Close" @onclick="ToIndex" Color="Color.Primary" Size="Size.Medium" aria-label="Exit"></MudIconButton>
+        </div>
+        <div>
+            <div class="H1Line" style="margin: 0 auto; margin-top: -4%;">
+                <h1 id="OtotH1">אודות</h1>
+            </div>
+            <div>
+                <img src="Images/Logo.png" id="logoOdot" />
+                <p id="LogoP">מחולל ליצירת תוצרי למידה אינטראקטיביים</p>
+                <p class="OdotTxtTop">פרויקט גמר, תשפ"ב</p>
+                <p class="OdotTxtTop">
+                    <a href="https://www.hit.ac.il/telem/overview" target="_blank" style="text-decoration: underline;">הפקולטה לטכנולוגיות למידה</a>
+                </p>
+            </div>
+
+            <div style="margin: 2% 10%;">
+                <div style="margin-bottom: 4%;">
+                    <img src="/Images/HIT.svg" style="width: 13vh; margin: 0px 33% 1% 5%; " />
+                    <div style="display: inline-block; ">
+                        <h2 class="OtotH2">:צוות הפרויקט</h2>
+                        <p class="OdotTxt">ספיר טפר ואופיר אינהורן</p>
+                        <h2 class="OtotH2">:מנחי הפרויקט</h2>
+                        <p class="OdotTxt">דן כהן-וקס ותימור ניסים</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 4%;">
+                    <img src="/Images/Clalit_Logo_Clean_2020.svg" style=" width: 13vh; margin: 0px 33% 1% 5%; " />
+                    <div style="display: inline-block;">
+                        <h2 class="OtotH2">בשיתוף עם ארגון כללית</h2>
+                        <p class="OdotTxt">:מומחה התוכן/נציג הארגון</p>
+                        <p class="OdotTxt">היבא עלי</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p style="text-align: center; letter-spacing: 0px; color: #4CBFD2; font: normal normal 600 15px/35px Segoe UI; direction: ltr;">
+                    HIT כל הזכויות שמורות למכון טכנולוגי חולון
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+@code{
+
+    private void ToIndex()
+    {
+        navigat.NavigateTo("/");
+    }
+
+}

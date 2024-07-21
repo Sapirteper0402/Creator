@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="45.5" height="34" viewBox="0 0 45.5 34">
+  <g id="Group_24" data-name="Group 24" transform="translate(-329.195 -790.013)">
+    <g id="Group_2" data-name="Group 2" transform="translate(254.695 -13.987)">
+      <g id="Ellipse_10" data-name="Ellipse 10" transform="translate(109 804)" fill="none" stroke="#3a3a3a" stroke-width="0.5">
+        <circle cx="5.5" cy="5.5" r="5.5" stroke="none"/>
+        <circle cx="5.5" cy="5.5" r="5.25" fill="none"/>
+      </g>
+      <g id="Ellipse_11" data-name="Ellipse 11" transform="translate(111 806)" fill="#3a3a3a" stroke="#3a3a3a" stroke-width="0.5">
+        <circle cx="3.5" cy="3.5" r="3.5" stroke="none"/>
+        <circle cx="3.5" cy="3.5" r="3.25" fill="none"/>
+      </g>
+    </g>
+    <g id="Group_3" data-name="Group 3" transform="translate(254.695 9.013)">
+      <g id="Ellipse_10-2" data-name="Ellipse 10" transform="translate(109 804)" fill="none" stroke="#3a3a3a" stroke-width="0.5">
+        <circle cx="5.5" cy="5.5" r="5.5" stroke="none"/>
+        <circle cx="5.5" cy="5.5" r="5.25" fill="none"/>
+      </g>
+    </g>
+    <line id="Line_60" data-name="Line 60" x1="29" transform="translate(329.195 794.513)" fill="none" stroke="#707070" stroke-width="1"/>
+    <line id="Line_63" data-name="Line 63" x1="29" transform="translate(329.195 816.513)" fill="none" stroke="#707070" stroke-width="1"/>
+    <line id="Line_61" data-name="Line 61" x1="20" transform="translate(338.195 798.513)" fill="none" stroke="#707070" stroke-width="1"/>
+    <line id="Line_62" data-name="Line 62" x1="20" transform="translate(338.195 820.513)" fill="none" stroke="#707070" stroke-width="1"/>
+  </g>
+</svg>

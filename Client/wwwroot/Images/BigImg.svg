@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53" height="44" viewBox="0 0 53 44">
+  <g id="Group_20" data-name="Group 20" transform="translate(-325 -603)">
+    <path id="Path_40" data-name="Path 40" d="M531.1,694.857l16.139-22.9,7.532,13.214,6.814-7.973,10.76,17.656Z" transform="translate(-200.077 -54.529)" fill="none" stroke="#707070" stroke-width="0.5"/>
+    <g id="Ellipse_13" data-name="Ellipse 13" transform="translate(364 613)" fill="none" stroke="#707070" stroke-width="0.5">
+      <circle cx="4" cy="4" r="4" stroke="none"/>
+      <circle cx="4" cy="4" r="3.75" fill="none"/>
+    </g>
+    <g id="Rectangle_94" data-name="Rectangle 94" transform="translate(325 603)" fill="none" stroke="#707070" stroke-width="0.5">
+      <rect width="53" height="44" rx="4" stroke="none"/>
+      <rect x="0.25" y="0.25" width="52.5" height="43.5" rx="3.75" fill="none"/>
+    </g>
+  </g>
+</svg>

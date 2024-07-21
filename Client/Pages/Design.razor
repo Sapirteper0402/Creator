@@ -1,0 +1,206 @@
+﻿@page "/Design"
+@page "/Design/{Id:int}"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+
+<div class="allPage">
+    <EditForm Model="SingleProject" OnSubmit="AllProjectsFunc">
+        <MudGrid Spacing="0">
+            <MudItem sm="3" md="3" lg="3" xl="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="AllProjectsFunc" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">לטבלת התוצרים</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="()=> UpdateProject(ToProjectPreview)" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">תצוגה מקדימה</MudButton>
+            </MudItem>
+            <MudItem sm="6" md="6" lg="6" xl="8">
+                <div class="myNav" style="margin: 0 auto">
+                    <div style="margin-right: 9%;">
+                        <div class="DivBtn1" @onclick="()=> UpdateProject(ToSettings)">
+                            <input type="button" value="1" class="NavButton" />
+                            <span>הגדרות</span>
+                        </div>
+                        <div class="navLine1"></div>
+                        <div class="DivBtn2" @onclick="()=> UpdateProject(ToOpening)">
+                            <input type="button" value="2" class="NavButton" />
+                            <span>פתיח</span>
+                        </div>
+                        <div class="navLine1"></div>
+                        <div class="DivBtn3" @onclick="()=> UpdateProject(ToEditor)">
+                            <input type="button" value="3" class="NavButton" />
+                            <span>תוכן</span>
+                        </div>
+                        <div class="navLine1"></div>
+                        <div class="DivBtn4">
+                            <input type="button" value="4" class="NavBtnSelected" />
+                            <span style="font: normal normal 600 16px/22px Segoe UI;">עיצוב</span>
+                        </div>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem sm="3" md="3" lg="3" xl="2">
+                <div>
+                    <img id="Logo" src="Images/Logo.png" alt="Creator logo" />
+                </div>
+            </MudItem>
+
+            @*--------------------*@
+
+            <MudItem sm="2" md="2" lg="2" xl="2"></MudItem>
+            <MudItem sm="8" md="8" lg="8" xl="8">
+                <div class="H1Line">
+                    <h1>עיצוב</h1>
+                </div>
+                <MudRadioGroup @bind-SelectedOption="SelectedRadio">
+                    <div style="width: 100%; margin-top: 5%;">
+                        <div id="DivWhite">
+                            <div class="DivTextRadioBtn">
+                                <MudRadio Option="@("light")" Dense="true" Size="Size.Small"><span id="textColorRadioBtnWhite">עיצוב בהיר</span></MudRadio>
+                            </div>
+                            <div class="AllColor">
+                                <div class="marginLineColor">
+                                    <div class="DivColorRight">
+                                        <span class="textColor">צבע רקע</span>
+                                        <div class="DivColor" style="background: #FFFFFF 0% 0% no-repeat padding-box; border: 1px solid #707070;"></div>
+                                    </div>
+                                    <div class="DivColorLeft">
+                                        <span class="textColor">צבע כותרת</span>
+                                        <div class="DivColor" style="background: #2B838E 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                </div>
+                                @*-------*@
+                                <div class="marginLineColor">
+                                    <div class="DivColorRight">
+                                        <span class="textColor">צבע קישור</span>
+                                        <div class="DivColor" style="background: #FB9C23 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                    <div class="DivColorLeft">
+                                        <span class="textColor">צבע כותרת משנה</span>
+                                        <div class="DivColor" style="background: #51D9B5 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: contents;">
+                            <div id="DesignLine"></div>
+                        </div>
+                        <div id="DivBlack">
+                            <div class="DivTextRadioBtn">
+                                <MudRadio Option="@("dark")" Dense="true" Size="Size.Small"><span id="textColorRadioBtnBlack">עיצוב כהה</span></MudRadio>
+                            </div>
+                            <div class="AllColor">
+                                <div class="marginLineColor">
+                                    <div class="DivColorRight">
+                                        <span class="textColorWhite">צבע רקע</span>
+                                        <div class="DivColor" style="background: #494C54 0% 0% no-repeat padding-box; border: 1px solid #FFFFFF;"></div>
+                                    </div>
+                                    <div class="DivColorLeft">
+                                        <span class="textColorWhite">צבע כותרת</span>
+                                        <div class="DivColor" style="background: #2F8B97 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                </div>
+                                @*-------*@
+                                <div class="marginLineColor">
+                                    <div class="DivColorRight">
+                                        <span class="textColorWhite">צבע קישור</span>
+                                        <div class="DivColor" style="background: #D6A05B 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                    <div class="DivColorLeft">
+                                        <span class="textColorWhite">צבע כותרת משנה</span>
+                                        <div class="DivColor" style="background: #7BCBB6 0% 0% no-repeat padding-box;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </MudRadioGroup>
+            </MudItem>
+            <MudItem sm="2" md="2" lg="2" xl="2"></MudItem>
+
+            @*--------------------*@
+
+            <div style="width: 100%; position:absolute; bottom:2%;">
+                <div style="display: inline-block; width: 15%;">
+                    <input type="button" class="BackBtn cursor-pointer" Value="חזור" @onclick="()=> UpdateProject(ToEditor)" />
+                </div>
+                <div style="display: inline-block; width: 68%;">
+                    <div class="LogoDivDown">
+                        <div style="margin-bottom: 5px;">
+                            <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                        </div>
+                        <div>
+                            <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                            <div class="LineClalitLogo"></div>
+                            <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                        </div>
+                    </div>
+                </div>
+                <div style=" display:inline-block; width:15%;">
+                    <div style=" margin-top: 10%; margin-bottom: -1%; float: left;">
+                        <MudTooltip>
+                            <input type="Submit" class="NextBtn cursor-pointer" Value="סיום עריכה" />
+                        </MudTooltip>
+                    </div>
+                </div>
+            </div>
+        </MudGrid>
+    </EditForm>
+</div>
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    Project SingleProject = new Project();
+    public string SelectedRadio { get; set; } = " ";
+
+    //משתנים למעברי עמודים עם שמירה
+    string TheProject = "TheProject";
+    string ToEditor = "Editor";
+    string ToSettings = "Settings";
+    string ToOpening = "Opening";
+    string ToProjectPreview = "ProjectPreview";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getResponse = await Http.GetAsync("api/Projects/" + Id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+        }
+
+        SelectedRadio = SingleProject.ColorDesign;
+    }
+
+
+
+    //שמירה וניווט
+    private async Task UpdateProject(string pageName)
+    {
+        SingleProject.ColorDesign = SelectedRadio;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            navigat.NavigateTo("/" + pageName + "/" + SingleProject.ID);
+        }
+    }
+
+
+    //מעבר לטבלת הפרוייקטים עם שמירה
+    private async Task AllProjectsFunc()
+    {
+        SingleProject.ColorDesign = SelectedRadio;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            navigat.NavigateTo("/AllProjects");
+        }
+    }
+
+}
+
+
+
+

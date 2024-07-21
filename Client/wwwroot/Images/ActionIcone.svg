@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53" height="27" viewBox="0 0 53 27">
+  <g id="Group_15" data-name="Group 15" transform="translate(-324 -286)">
+    <text id="לחצו" transform="translate(351 296)" fill="#3a3a3a" font-size="8" font-family="SegoeUI, Segoe UI"><tspan x="-8.217" y="0">לחצו</tspan></text>
+    <g id="Rectangle_96" data-name="Rectangle 96" transform="translate(324 286)" fill="none" stroke="#707070" stroke-width="0.5">
+      <rect width="53" height="15" rx="2" stroke="none"/>
+      <rect x="0.25" y="0.25" width="52.5" height="14.5" rx="1.75" fill="none"/>
+    </g>
+    <g id="Rectangle_97" data-name="Rectangle 97" transform="translate(337 302)" fill="none" stroke="#707070" stroke-width="0.5">
+      <rect width="40" height="5" rx="1" stroke="none"/>
+      <rect x="0.25" y="0.25" width="39.5" height="4.5" rx="0.75" fill="none"/>
+    </g>
+    <g id="Rectangle_98" data-name="Rectangle 98" transform="translate(337 308)" fill="none" stroke="#707070" stroke-width="0.5">
+      <rect width="40" height="5" rx="1" stroke="none"/>
+      <rect x="0.25" y="0.25" width="39.5" height="4.5" rx="0.75" fill="none"/>
+    </g>
+    <g id="Polygon_3" data-name="Polygon 3" transform="translate(371 295) rotate(180)" fill="#fff">
+      <path d="M 3.065736532211304 2.5 L 0.9342632293701172 2.5 L 1.99999988079071 0.9013950228691101 L 3.065736532211304 2.5 Z" stroke="none"/>
+      <path d="M 1.99999988079071 0 L 4 3 L -2.384185791015625e-07 3 L 1.99999988079071 0 Z" stroke="none" fill="#707070"/>
+    </g>
+  </g>
+</svg>

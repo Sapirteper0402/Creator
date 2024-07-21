@@ -1,0 +1,140 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberCompNone"></div>
+            <div class="ComponentDivClass">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if (TxtString != OneBlock.BlockContent)
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                        else
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="CompTitle">כותרת משנה</span>
+                    </div>
+                    <div style="margin: 1% 4%; display: grid;">
+                        <label for="SubTitle">
+                            <MudTextField id="SubTitle" @bind-Value="@OneBlock.BlockContent" Margin="Margin.Dense" style=" width: 100%; font: normal 13px/22px Segoe UI; height: 37px;" Label="כתבו את כותרת המשנה כאן" Variant="Variant.Outlined" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    //פרמטרים למחיקת הרכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    string TxtString;
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OneBlock.BlockContent != "")
+        {
+            TxtString = OneBlock.BlockContent;
+        }
+        else
+        {
+            TxtString = "";
+        }
+
+    }
+
+
+    //מחיקה
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+
+    //עדכון
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        TxtString = OneBlock.BlockContent;
+        OneBlock.ToContinue = 1;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(OneBlock.BlockContent) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+}

@@ -1,0 +1,100 @@
+﻿@page "/OpenPreview"
+@page "/OpenPreview/{Id:int}"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+
+<div class="allFinalPage" style="background-color:@BcColor">
+    <div>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="ToOpeningFunc" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 3%; width: 9%;">חזרה לעריכה</MudButton>
+    </div>
+
+    @*צבע בהיר*@
+    @if (SingleProject.ColorDesign == "light")
+    {
+        <br /><br />
+        <div class="bigDivBeginning">
+            <h1 class="H1Beginning">@SingleProject.ProjectName</h1>
+            <h2 class="H2Beginning">בתוכנת @SingleProject.SoftwareName</h2>
+            <div class="beginningDivLine"></div>
+            <p class="PIntroduction">@SingleProject.Introduction</p>
+            <div style="width: 15%; margin: 0 auto;">
+                <input type="button" class="BTNFinalP cursor-pointer" Value="התחל" />
+            </div>
+            <div class="LogoDivDown">
+                <div style="margin-bottom: 5px;">
+                    <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                </div>
+                <div>
+                    <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                    <div class="LineClalitLogo"></div>
+                    <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                </div>
+            </div>
+        </div>
+    }
+    //צבע כהה
+    else
+    {
+        <br /><br />
+        <div class="bigDivBeginningDark">
+            <h1 class="H1BeginningDark">@SingleProject.ProjectName</h1>
+            <h2 class="H2BeginningDark">בתוכנת @SingleProject.SoftwareName</h2>
+            <div class="beginningDivLineDark"></div>
+            <p class="PIntroductionDark">@SingleProject.Introduction</p>
+            <div style="width: 15%; margin: 0 auto;">
+                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; width: 100%; ">התחל</MudButton>
+            </div>
+            <div class="LogoDivDown">
+                <div style="margin-bottom: 5px;">
+                    <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                </div>
+                <div>
+                    <span class="LogoTxtRightDark">מחלקת הטמעה בדיגיטל</span>
+                    <div class="LineClalitLogo"></div>
+                    <span class="LogoTxtLeftDark">חטיבת מערכות מידה ודיגיטל</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    Project SingleProject = new Project();
+
+    string BcColor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getResponse = await Http.GetAsync("api/Projects/" + Id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+        }
+
+        if (SingleProject.ColorDesign == "light")
+        {
+            BcColor = "#FFFFFFA6";
+        }
+        else
+        {
+            BcColor = "#494C54";
+        }
+    }
+
+
+    //ניווט
+    private void ToOpeningFunc()
+    {
+        navigat.NavigateTo("/Opening/" + SingleProject.ID);
+    }
+
+}

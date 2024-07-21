@@ -1,0 +1,167 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberCompNone"></div>
+            <div id="CompDivAction">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if ((TxtString[0] == null && l.LinkText == null && TxtString[1] == null && l.LinkURL == null) || (TxtString[0] == l.LinkText && TxtString[1] == l.LinkURL))
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                        else
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="CompTitle">קישור חיצוני</span>
+                    </div>
+                    <div style="margin: 1% 4%; display: grid;">
+                        <label for="txtURL">
+                            <span class="CompSubTitle">תוכן הקישור</span>
+                            <MudTextField id="txtURL" @bind-Value="l.LinkText" Margin="Margin.Dense" style=" width: 100%; font: normal 13px/22px Segoe UI; height: 37px;" Label="הטקסט הרצוי לתוכן הקישור" Variant="Variant.Outlined" />
+                        </label>
+                        <label for="LinkURL" class="LinkLabel">
+                            <span class="CompSubTitle">קישור URL</span>
+                            <MudTextField id="LinkURL" @bind-Value="l.LinkURL" Margin="Margin.Dense" style=" width: 100%; font: normal 13px/22px Segoe UI; height: 37px;" Label="קישור ה-URL" Variant="Variant.Outlined" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+    LinkBlock l = new LinkBlock();
+
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    string[] TxtString = new string[2];
+
+
+    //פרמטרים למחיקת הרכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OneBlock.BlockContent != "")
+        {
+            l = JsonSerializer.Deserialize<LinkBlock>(OneBlock.BlockContent);
+            TxtString[0] = l.LinkText;
+            TxtString[1] = l.LinkURL;
+        }
+    }
+
+
+
+    //עדכון
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        TxtString[0] = l.LinkText;
+        TxtString[1] = l.LinkURL;
+
+        OneBlock.BlockContent = JsonSerializer.Serialize(l);
+
+        if (string.IsNullOrEmpty(TxtString[0]) == false && string.IsNullOrEmpty(TxtString[1]) == false)
+        {
+            OneBlock.ToContinue = 1;
+        }
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(TxtString[0]) == false && string.IsNullOrEmpty(TxtString[1]) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+
+    //מחיקה
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+
+        if (TxtString[0] == l.LinkText && TxtString[1] == l.LinkURL)
+        {
+            if (OneBlock.BlockContent != "")
+            {
+                l = JsonSerializer.Deserialize<LinkBlock>(OneBlock.BlockContent);
+                TxtString[0] = l.LinkText;
+                TxtString[1] = l.LinkURL;
+            }
+        }
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+
+}

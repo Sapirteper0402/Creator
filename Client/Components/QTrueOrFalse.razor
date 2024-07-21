@@ -1,0 +1,263 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberCompNone"></div>
+
+            <div class="ComponentDivClass">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if (TxtString[0] == B.TrueOrFals_Ques && TxtString[1] == B.TrueOrFals_True && TxtString[2] == B.TrueOrFals_False && TxtString[3] == B.TrueOrFals_FeedbackTrue && TxtString[4] == B.TrueOrFals_FeedbackFalse && SelectedValue == B.TrueOrFals_Radio)
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                        else
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle" style="width:90%">
+                        <span class="CompTitle">שאלת נכון\לא נכון</span>
+                        <span class="QCompSubTitle">תוכן השאלה</span>
+                        <MudTextField id="txtQuesManyChoices" @bind-Value="B.TrueOrFals_Ques" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 37px; margin-bottom: 2%;" Label="הטקסט הרצוי לתוכן השאלה" Variant="Variant.Outlined" />
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="QCompSubTitle" style="margin-bottom: 0%;">אפשרויות מענה</span>
+                        <span class="QCompDescription">הזינו את תוכן התשובות ובחרו את התשובה הנכונה</span>
+
+                        <MudRadioGroup @bind-SelectedOption="@SelectedValue">
+                            <div class="QCompTFAnsDivRight">
+                                <MudRadio Option="@("Ans1")" Color="Color.Secondary" Dense="true" Size="Size.Small" style="PADDING-TOP: 9px; display: inline-block; margin-right: 12%; margin-left: 8px;"></MudRadio>
+                                <MudTextField id="Ans1" @bind-Value="B.TrueOrFals_True" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 33px; padding: 6.5px 10px; " Label="תשובה נכונה" Variant="Variant.Outlined" />
+                            </div>
+                            <div class="QCompTFAnsDivLeft">
+                                <MudRadio Option="@("Ans2")" Color="Color.Secondary" Dense="true" Size="Size.Small" style="PADDING-TOP: 9px; display: inline-block; margin-right: 12%; margin-left: 8px;"></MudRadio>
+                                <MudTextField id="Ans2" @bind-Value="B.TrueOrFals_False" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 33px; padding: 6.5px 10px; " Label="תשובה לא נכונה" Variant="Variant.Outlined" />
+                            </div>
+                        </MudRadioGroup>
+                    </div>
+
+                    <div class="GreenDiv">
+                        <span class="QCompFeedbackSubTitle">משוב</span>
+                        <span class="QCompFeedbackDescription">ניתן לשנות את תוכן המשוב</span><br />
+                        <div style="width: 90%; margin: 0 auto;">
+                            <div class="TrueDivFeedback">
+                                <div>
+                                    <MudIcon Icon="@Icons.Outlined.Check" Style="display: block; margin: 0 auto; padding-bottom: 0px; padding-top: 0px;"></MudIcon>
+                                    <span class="FeedbackTitle">תשובה נכונה</span>
+                                </div>
+                                <MudTextField id="trueFeedback" @bind-Value="B.TrueOrFals_FeedbackTrue" Margin="Margin.Dense" style="width: 100%; font: normal 12px/22px Segoe UI; height: 35px;" Variant="Variant.Outlined" />
+                            </div>
+                            <div class="QCompFeedbackLine"></div>
+                            <div class="FalseDivFeedback">
+                                <div>
+                                    <MudIcon Icon="@Icons.Outlined.Close" Style="display: block; margin: 0 auto; padding-bottom: 0px; padding-top: 0px;"></MudIcon>
+                                    <span class="FeedbackTitle">תשובה לא נכונה</span>
+                                </div>
+                                <MudTextField id="FalseFeedback" @bind-Value="B.TrueOrFals_FeedbackFalse" style="width: 100%; font: normal 12px/22px Segoe UI; height: 35px;" Variant="Variant.Outlined" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+
+    QTrueOrFalseBlock B = new QTrueOrFalseBlock();
+
+    //פרמטר של רשומה שלמה מתוך עמוד עריכה
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    //רדיו בטן לתשובה הנכונה
+    public string SelectedValue { get; set; } = "Ans1";
+
+    string[] TxtString = new string[5];
+
+    //פרמטרים למחיקת רכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //אם יש תוכן
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<QTrueOrFalseBlock>(OneBlock.BlockContent);
+            SelectedValue = B.TrueOrFals_Radio;
+
+            TxtString[0] = B.TrueOrFals_Ques;
+            TxtString[1] = B.TrueOrFals_True;
+            TxtString[2] = B.TrueOrFals_False;
+            TxtString[3] = B.TrueOrFals_FeedbackTrue;
+            TxtString[4] = B.TrueOrFals_FeedbackFalse;
+        }
+        //אם אין תוכן
+        else
+        {
+            B.TrueOrFals_True = "נכון";
+            B.TrueOrFals_False = "לא נכון";
+
+            //הזנת ערך דיפולט לתיבות טקסט של פידבק
+            if (B.TrueOrFals_FeedbackTrue == "" || B.TrueOrFals_FeedbackTrue == null)
+            {
+                B.TrueOrFals_FeedbackTrue = "כל הכבוד, תשובה נכונה";
+            }
+            if (B.TrueOrFals_FeedbackFalse == "" || B.TrueOrFals_FeedbackFalse == null)
+            {
+                B.TrueOrFals_FeedbackFalse = "תשובה לא נכונה, נסה שנית";
+            }
+
+            TxtString[0] = B.TrueOrFals_Ques;
+            TxtString[1] = B.TrueOrFals_True;
+            TxtString[2] = B.TrueOrFals_False;
+            TxtString[3] = B.TrueOrFals_FeedbackTrue;
+            TxtString[4] = B.TrueOrFals_FeedbackFalse;
+        }
+    }
+
+
+    //מחיקת רכיב
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+
+
+        //איפוס
+        //אם יש תוכן
+        if (OneBlock.BlockContent != "")
+        {
+            B = JsonSerializer.Deserialize<QTrueOrFalseBlock>(OneBlock.BlockContent);
+            SelectedValue = B.TrueOrFals_Radio;
+
+            TxtString[0] = B.TrueOrFals_Ques;
+            TxtString[1] = B.TrueOrFals_True;
+            TxtString[2] = B.TrueOrFals_False;
+            TxtString[3] = B.TrueOrFals_FeedbackTrue;
+            TxtString[4] = B.TrueOrFals_FeedbackFalse;
+        }
+        //אם אין תוכן
+        else
+        {
+            B.TrueOrFals_True = "נכון";
+            B.TrueOrFals_False = "לא נכון";
+
+            //הזנת ערך דיפולט לתיבות טקסט של פידבק
+            if (B.TrueOrFals_FeedbackTrue == "" || B.TrueOrFals_FeedbackTrue == null)
+            {
+                B.TrueOrFals_FeedbackTrue = "כל הכבוד, תשובה נכונה";
+            }
+            if (B.TrueOrFals_FeedbackFalse == "" || B.TrueOrFals_FeedbackFalse == null)
+            {
+                B.TrueOrFals_FeedbackFalse = "תשובה לא נכונה, נסה שנית";
+            }
+
+            TxtString[0] = B.TrueOrFals_Ques;
+            TxtString[1] = B.TrueOrFals_True;
+            TxtString[2] = B.TrueOrFals_False;
+            TxtString[3] = B.TrueOrFals_FeedbackTrue;
+            TxtString[4] = B.TrueOrFals_FeedbackFalse;
+        }
+
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+
+
+    //שמירת הנתונים
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        TxtString[0] = B.TrueOrFals_Ques;
+        TxtString[1] = B.TrueOrFals_True;
+        TxtString[2] = B.TrueOrFals_False;
+        TxtString[3] = B.TrueOrFals_FeedbackTrue;
+        TxtString[4] = B.TrueOrFals_FeedbackFalse;
+
+        B.TrueOrFals_Radio = SelectedValue;
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+
+
+        if (string.IsNullOrEmpty(TxtString[0]) == false && string.IsNullOrEmpty(TxtString[1]) == false && string.IsNullOrEmpty(TxtString[2]) == false && string.IsNullOrEmpty(TxtString[3]) == false && string.IsNullOrEmpty(TxtString[4]) == false && string.IsNullOrEmpty(SelectedValue) == false)
+        {
+            OneBlock.ToContinue = 1;
+        }
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(TxtString[0]) == false && string.IsNullOrEmpty(TxtString[1]) == false && string.IsNullOrEmpty(TxtString[2]) == false && string.IsNullOrEmpty(TxtString[3]) == false && string.IsNullOrEmpty(TxtString[4]) == false && string.IsNullOrEmpty(SelectedValue) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+
+    }
+
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+
+}

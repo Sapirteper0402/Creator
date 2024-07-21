@@ -1,0 +1,617 @@
+﻿@page "/Editor"
+@page "/Editor/{Id:int}"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+
+<div class="allPage">
+    <MudGrid Spacing="0">
+        <MudItem sm="3" md="3" lg="3" xl="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="AllProjectsFunc" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">לטבלת התוצרים</MudButton>
+            @{ChangeBTN1(); }
+            @if (ToContinueBool == true && ListOfBlocks.Count != 0)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="()=> toNavigate(ToProjectPreview)" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">תצוגה מקדימה</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Disabled="true" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">תצוגה מקדימה</MudButton>
+            }
+        </MudItem>
+        <MudItem sm="6" md="6" lg="6" xl="8">
+            <div class="myNav" style="margin: 0 auto">
+                <div style="margin-right: 9%;">
+                    <div class="DivBtn1 cursor-pointer" @onclick="()=> toNavigate(ToSettings)">
+                        <input type="button" value="1" class="NavButton cursor-pointer" />
+                        <span>הגדרות</span>
+                    </div>
+                    <div class="navLine1"></div>
+                    <div class="DivBtn2 cursor-pointer" @onclick="()=> toNavigate(ToOpening)">
+                        <input type="button" value="2" class="NavButton cursor-pointer" />
+                        <span>פתיח</span>
+                    </div>
+                    <div class="navLine1"></div>
+                    <div class="DivBtn3">
+                        <input type="button" value="3" class="NavBtnSelected" />
+                        <span style="font: normal normal 600 16px/22px Segoe UI;">תוכן</span>
+                    </div>
+                    <div class="navLine1"></div>
+                    <div class="DivBtn4" @onclick="()=> toNavigate(ToDesign)">
+                        <input type="button" value="4" class="NavButton" />
+                        <span>עיצוב</span>
+                    </div>
+                </div>
+            </div>
+        </MudItem>
+        <MudItem sm="3" md="3" lg="3" xl="2">
+            <div>
+                <img id="Logo" src="Images/Logo.png" alt="Creator logo" />
+            </div>
+        </MudItem>
+
+        @*--------------------*@
+
+        <MudItem sm="2" md="2" lg="2" xl="2"></MudItem>
+        <MudItem sm="7" md="7" lg="7" xl="7">
+            <div class="H1Line">
+                <h1>תוכן</h1>
+            </div>
+        </MudItem>
+        <MudItem sm="3" md="3" lg="3" xl="3"></MudItem>
+
+        @*--------------------*@
+
+        <MudItem sm="1" md="1" lg="1" xl="1"></MudItem>
+        <MudItem sm="7" md="7" lg="7" xl="7" Style="margin-bottom: 10%; min-height: 58vh;">
+            @*אם הרשימה ריקה*@
+            @if (ListOfBlocks.Count == 0)
+            {
+                <p id="Instructions1">כדי להוסיף רכיב חדש יש ללחוץ על הרכיב הרצוי מתוך רשימת הרכיבים בצד השמאלי של המסך</p>
+                <p id="Instructions2">יש לשמור כל רכיב לפני הוספת רכיב חדש</p>
+                <div style="border-bottom: 3px dashed darkgray; width: 95%; height: 20px;"></div>
+            }
+            else
+            {
+                <p id="Instructions_Comp">יש לוודא כי כל הרכיבים שמורים</p>
+            }
+            @{int n = 0;}
+            @foreach (Block TheBlocks in ListOfBlocks)
+            {
+                @if (TheBlocks.BlockType != null)
+                {
+                    switch (TheBlocks.BlockType)
+                    {
+                        case "Action":
+                            if (TheBlocks.Number != 0)
+                            {
+                                n++;
+                                <CAction OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="@n" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CAction> }
+                            else
+                            {
+                                <CAction OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="0" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CAction>
+                            }
+                            break;
+                        case "Text":
+                            if (TheBlocks.Number != 0)
+                            {
+                                n++;
+                                <CText OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="@n" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CText> }
+                            else
+                            {
+                                <CText OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="0" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CText>
+                            }
+                            break;
+                        case "Title":
+                            <CTitle OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CTitle>
+                            break;
+                        case "Subtitle":
+                            <CSubtitle OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CSubtitle>
+                            break;
+                        case "ActionAndSmallImage":
+                            if (TheBlocks.Number != 0)
+                            {
+                                n++;
+                                <ActionAndSmallImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="@n" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></ActionAndSmallImage> }
+                            else
+                            {
+                                <ActionAndSmallImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="0" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></ActionAndSmallImage>
+                            }
+                            break;
+                        case "TextAndSmallImage":
+                            if (TheBlocks.Number != 0)
+                            {
+                                n++;
+                                <TextAndSmallImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="@n" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></TextAndSmallImage>
+                            }
+                            else
+                            {
+                                <TextAndSmallImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" NumForNumber="0" NumChanged="changeNumFunc" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></TextAndSmallImage>
+                            }
+                            break;
+                        case "BigImage":
+                            <BigImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></BigImage>
+                            break;
+                        case "SmallImage":
+                            <SmallImage OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></SmallImage>
+                            break;
+                        case "Link":
+                            <CLink OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></CLink>
+                            break;
+                        case "QOneChoice":
+                            <QOneChoice OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></QOneChoice>
+                            break;
+                        case "QManyChoices":
+                            <QManyChoices OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></QManyChoices>
+                            break;
+                        case "QTrueOrFalse":
+                            <QTrueOrFalse OneBlock="@TheBlocks" IDNum="0" NumberParamChanged="componentNumberChange" Filled="TheBlocks.ToContinue" UpdateFilledPlus="UpdateFilledPlusFunc" UpdateFilledMinus="UpdateFilledMinusFunc"></QTrueOrFalse>
+                            break;
+                    }
+                }
+            }
+        </MudItem>
+        <MudItem sm="0" md="0" lg="0" xl="1"></MudItem>
+        <MudItem sm="4" md="4" lg="4" xl="3">
+            <div style="margin-top: -7%;">
+                <div class="divRehivs">
+                    <p>בחרו את הרכיב הרצוי</p>
+                    <div class="divLine1">
+                        <div class="boxDivLine">
+                            <div class="lineTxt">
+                                <span>טקסט</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="LDivTxtRight1" @onclick="AddActionComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/ActionIcone.svg" alt="רכיב פעולה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">פעולה</span>
+                        </div>
+                    </div>
+                    <div class="LMiddle1" @onclick="AddTextComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/TextIcon.svg" alt="רכיב טקסט" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">טקסט</span>
+                        </div>
+                    </div>
+                    <div class="LDivTxtLeft1" @onclick="AddTitleComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/TitleIcon.svg" alt="רכיב כותרת" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">כותרת</span>
+                        </div>
+                    </div>
+
+                    <div class="LDivTxtRight" @onclick="AddActionImageComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/ActionVeImg.svg" alt="רכיב פעולה ותמונה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">פעולה + <br /> תמונה קטנה</span>
+                        </div>
+                    </div>
+                    <div class="LMiddle" @onclick="AddTextImageComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/TextVeImg.svg" alt="רכיב טקסט ותמונה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">טקסט + <br /> תמונה קטנה</span>
+                        </div>
+
+                    </div>
+                    <div class="LDivTxtLeft" @onclick="AddSubtitleComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/Subtitle.svg" alt="רכיב כותרת משנה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">כותרת משנה</span>
+                        </div>
+
+                    </div>
+
+                    <div class="divLine2">
+                        <div class="boxDivLine">
+                            <div class="lineTxt">
+                                <span>מדיה</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="LDivTxtRight" @onclick="AddBigImageComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/BigImg.svg" alt="רכיב תמונה גדולה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">תמונה גדולה</span>
+                        </div>
+                    </div>
+                    <div class="LMiddle" @onclick="AddSmallImageComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/SmallImg.svg" alt="רכיב תמונה קטנה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">תמונה קטנה</span>
+                        </div>
+                    </div>
+                    <div class="LDivTxtLeft" @onclick="AddLinkComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/link.svg" alt="רכיב קישור חיצוני" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">קישור חיצוני</span>
+                        </div>
+                    </div>
+
+
+                    <div class="divLine3">
+                        <div class="boxDivLine">
+                            <div class="lineTxt">
+                                <span>אינטראקציה</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="LDivTxtRightLast" @onclick="AddQOneChoiceComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/icon3.svg" alt="רכיב שאלת חד ברירה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">שאלת <br /> חד ברירה</span>
+                        </div>
+                    </div>
+                    <div class="LMiddle" @onclick="AddQManyChoicesComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/icon1.svg" alt="רכיב שאלת רב ברירה" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">שאלת <br /> רב ברירה</span>
+                        </div>
+                    </div>
+                    <div class="LDivTxtLeft" @onclick="AddQTrueOrFalseComp">
+                        <div class="BC">
+                            <img class="RehivsIcons" src="Images/icon2.svg" alt="רכיב שאלת נכון או לא נכון" />
+                        </div>
+                        <div class="DivWord">
+                            <span class="DivWordTxt">שאלת <br /> נכון \ לא נכון</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </MudItem>
+
+        @*--------------------*@
+
+        <MudItem sm="3" md="3" lg="3" xl="2">
+            <input type="button" class="BackBtn cursor-pointer" Value="חזור" @onclick="()=> toNavigate(ToOpening)" />
+        </MudItem>
+        <MudItem sm="6" md="6" lg="6" xl="8">
+            <div class="LogoDivDown">
+                <div style="margin-bottom: 5px;">
+                    <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                </div>
+                <div>
+                    <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                    <div class="LineClalitLogo"></div>
+                    <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                </div>
+            </div>
+        </MudItem>
+        <MudItem sm="3" md="3" lg="3" xl="2">
+            <div style="margin-top: 4%; margin-left: 6%; float: left;">
+                @{ChangeBTN1(); }
+                @if (ToContinueBool == true && ListOfBlocks.Count != 0)
+                {
+                    <MudTooltip>
+                        <input type="button" class="NextBtn cursor-pointer" Value="המשך" @onclick="()=> toNavigate(ToDesign)" />
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Duration="1000" Text="יש למלא את כל השדות ולשמור" Placement="Placement.Top">
+                        <input type="button" disabled class="NextBtnDis" Value="המשך" />
+                    </MudTooltip>
+                }
+
+            </div>
+        </MudItem>
+    </MudGrid>
+</div>
+
+
+
+@code {
+    bool ToContinueBool = true;
+    int counter1;
+
+    int IDNumBlock = 0;
+
+    int NForNumber = 1;
+
+    //משתנים למעברי עמודים עם שמירה
+    string ToSettings = "Settings";
+    string ToOpening = "Opening";
+    string ToDesign = "Design";
+    string ToProjectPreview = "ProjectPreview";
+
+    int myIndex = 0;
+    Block NewBlock = new Block();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    Project SingleProject = new Project();
+    List<Block> BlocksList;
+    //Block SingleBlock = new Block();
+    List<Block> ListOfBlocks = new List<Block>();
+
+    List<int> NumberList = new List<int>();
+
+    int CounterForSave;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //השוואת ID
+        var getResponse = await Http.GetAsync("api/Projects/" + Id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+        }
+
+        //Console.WriteLine("1");
+        //var getResponseBlock = await Http.GetAsync("api/Blocks/" + Id);
+        //if (getResponseBlock.IsSuccessStatusCode == true)
+        //{
+        //    SingleBlock = getResponseBlock.Content.ReadFromJsonAsync<Block>().Result;
+        //}
+        //Console.WriteLine("סוף 1");
+
+        //רשימת בלוקים לפי הפרוייקט בעת טעינת הדף
+        var getResponseList = await Http.GetAsync("api/Blocks/ListPerProject/" + Id);
+        ListOfBlocks = getResponseList.Content.ReadFromJsonAsync<List<Block>>().Result;
+
+        counter1 = ListOfBlocks.Count;
+    }
+
+
+    //מחיקת הבלוק מהרשימה
+    //פונקציה שמעידה שהיה שינוי ושמוחקת מהרשימה את הבלוק המתאים לפי האיידי שהגיע מהקומפוננטה
+    void componentNumberChange(int componentNum)
+    {
+        ListOfBlocks.RemoveAll(p => p.ID == componentNum);
+
+        NumberList.Clear();
+        foreach (Block TheBlocks in ListOfBlocks)
+        {
+            NumberList.Add(TheBlocks.Number);
+        }
+
+    }
+
+
+
+    void UpdateFilledPlusFunc(int Num1)
+    {
+        CounterForSave++;
+    }
+
+    void UpdateFilledMinusFunc(int Num2)
+    {
+        CounterForSave--;
+    }
+
+
+    void changeNumFunc(int Num)
+    {
+
+    }
+
+    public async Task ChangeBTN1()
+    {
+        await ChangeBTN();
+    }
+
+    int S = 0;
+    private async Task ChangeBTN()
+    {
+        S = 0;
+        foreach (Block TheBlocks in ListOfBlocks)
+        {
+            S += TheBlocks.ToContinue;
+        }
+
+        if (S == ListOfBlocks.Count)
+        {
+            ToContinueBool = true;
+
+            SingleProject.BlockID = 1;
+            var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        }
+        else
+        {
+            ToContinueBool = false;
+
+            SingleProject.BlockID = 0;
+            var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        }
+
+        if (ListOfBlocks.Count == 0 && S == 0)
+        {
+            ToContinueBool = false;
+
+            SingleProject.BlockID = 0;
+            var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        }
+    }
+
+
+    //הוספה
+    private async Task CreateBlock(string BlockType)
+    {
+        //מציאת המקסימום בRANK
+        int maxRank = 0;
+        foreach (Block TheBlocks in ListOfBlocks)
+        {
+            if (TheBlocks.Rank >= maxRank)
+            {
+                maxRank = TheBlocks.Rank;
+            }
+        }
+
+
+        NewBlock = new Block();
+        NewBlock.ProjectID = Id;
+        NewBlock.BlockType = BlockType;
+        NewBlock.Rank = maxRank + 1;
+        NewBlock.BlockContent = string.Empty;
+
+        if (NewBlock.BlockType == "Action" || NewBlock.BlockType == "Text" || NewBlock.BlockType == "ActionAndSmallImage" || NewBlock.BlockType == "TextAndSmallImage")
+        {
+            NewBlock.Number = 1;
+        }
+
+
+        var postResponse = await Http.PostAsJsonAsync("api/Blocks/Insert", NewBlock);
+        if (postResponse.IsSuccessStatusCode == true)
+        {
+            Block createdBlock = postResponse.Content.ReadFromJsonAsync<Block>().Result;
+        }
+    }
+
+
+    ////עדכון
+    //private async Task UpdateBlock()
+    //{
+    //    foreach (Block b in ListOfBlocks)
+    //    {
+    //        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", b);
+    //        if (updateResponse.IsSuccessStatusCode == true)
+    //        {
+    //            Block updatedBlock = updateResponse.Content.ReadFromJsonAsync<Block>().Result;
+    //        }
+    //    }
+    //}
+
+
+
+    //עדכון רשימת הרכיבים אחרי הוספת רכיב
+    private async Task UpdateListBlock()
+    {
+        //רשימת בלוקים לפי הפרוייקט בעת טעינת הדף
+        var getResponseList = await Http.GetAsync("api/Blocks/ListPerProject/" + Id);
+        ListOfBlocks = getResponseList.Content.ReadFromJsonAsync<List<Block>>().Result;
+    }
+
+
+
+
+    //---הוספת רכיבים לבמה בלחיצת כפתור---
+
+    //לחיצה על רכיב פעולה
+    public async Task AddActionComp()
+    {
+        await CreateBlock("Action");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב טקסט
+    public async Task AddTextComp()
+    {
+        await CreateBlock("Text");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב כותרת
+    public async Task AddTitleComp()
+    {
+        await CreateBlock("Title");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב פעולה ותמונה קטנה
+    public async Task AddActionImageComp()
+    {
+        await CreateBlock("ActionAndSmallImage");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב טקסט ותמונה קטנה
+    public async Task AddTextImageComp()
+    {
+        await CreateBlock("TextAndSmallImage");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב כותרת משתנה
+    public async Task AddSubtitleComp()
+    {
+        await CreateBlock("Subtitle");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב תמונה גדולה
+    public async Task AddBigImageComp()
+    {
+        await CreateBlock("BigImage");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב תמונה קטנה
+    public async Task AddSmallImageComp()
+    {
+        await CreateBlock("SmallImage");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על רכיב כותרת משתנה
+    public async Task AddLinkComp()
+    {
+        await CreateBlock("Link");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על שאלת חד ברירה
+    public async Task AddQOneChoiceComp()
+    {
+        await CreateBlock("QOneChoice");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על שאלת רב ברירה
+    public async Task AddQManyChoicesComp()
+    {
+        await CreateBlock("QManyChoices");
+        await UpdateListBlock();
+    }
+
+    //לחיצה על שאלת נכון לא נכון
+    public async Task AddQTrueOrFalseComp()
+    {
+        await CreateBlock("QTrueOrFalse");
+        await UpdateListBlock();
+    }
+
+
+
+    //------------ניווט----------
+
+    //פונקציית ניווט
+    private void toNavigate(string pageName)
+    {
+        navigat.NavigateTo("/" + pageName + "/" + SingleProject.ID);
+    }
+
+
+    private void AllProjectsFunc()
+    {
+        navigat.NavigateTo("/AllProjects");
+    }
+
+}
+

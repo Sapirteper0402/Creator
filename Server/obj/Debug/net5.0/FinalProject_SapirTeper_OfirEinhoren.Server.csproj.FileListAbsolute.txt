@@ -1,0 +1,2 @@
+C:\Users\sapir\OneDrive\שולחן העבודה\לימודים HIT\תואר ראשון\שנה ג\פרוייקט גמר\FinalProject\קובץ הפרוייקט הסופי - ניתן להרצה\FinalProject_SapirTeper_OfirEinhoren\Server\obj\Debug\net5.0\FinalProject_SapirTeper_OfirEinhoren.Server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sapir\OneDrive\שולחן העבודה\לימודים HIT\תואר ראשון\שנה ג\פרוייקט גמר\FinalProject\קובץ הפרוייקט הסופי - ניתן להרצה\FinalProject_SapirTeper_OfirEinhoren\Server\obj\Debug\net5.0\FinalProject_SapirTeper_OfirEinhoren.Server.csproj.AssemblyReference.cache

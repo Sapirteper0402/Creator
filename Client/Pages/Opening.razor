@@ -1,0 +1,180 @@
+﻿@page "/Opening"
+@page "/Opening/{Id:int}"
+@inject NavigationManager navigat
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@inject HttpClient Http
+
+<div class="allPage">
+    <EditForm Model="SingleProject" OnSubmit="()=> UpdateProject(ToEditor)">
+        <MudGrid Spacing="0">
+            <MudItem sm="3" md="3" lg="3" xl="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="AllProjectsFunc" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">לטבלת התוצרים</MudButton>
+                @if (string.IsNullOrEmpty(SingleProject.ProjectName) == false && string.IsNullOrEmpty(SingleProject.SoftwareName) == false && string.IsNullOrEmpty(SingleProject.Introduction) == false)
+                {
+                    <MudButton Variant="Variant.Filled" @onclick="()=> UpdateProject(ToOpenPreview)" Color="Color.Secondary" Style="border-radius: 21px; font: normal normal 600 11pt/20px Segoe UI; height: 30px; color: #FFFFFF; margin-top: 5%; margin-right: 5%;">תצוגה מקדימה</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Disabled="true" Style="border-radius: 21px; font: normal normal 600 10pt/20px Segoe UI; height: 30px; margin-top: 5%; margin-right: 5%;">תצוגה מקדימה</MudButton>
+                }
+            </MudItem>
+            <MudItem sm="6" md="6" lg="6" xl="8">
+                <div class="myNav" style="margin: 0 auto">
+                    <div style="margin-right: 9%;">
+                        <div class="DivBtn1 cursor-pointer" @onclick="()=> UpdateProject(ToSettings)">
+                            <input type="button" value="1" class="NavButton cursor-pointer" />
+                            <span>הגדרות</span>
+                        </div>
+                        <div class="navLine1"></div>
+                        <div class="DivBtn2">
+                            <input type="button" value="2" class="NavBtnSelected" />
+                            <span style="font: normal normal 600 16px/22px Segoe UI;">פתיח</span>
+                        </div>
+                        <div class="navLine1"></div>
+                        @if (string.IsNullOrEmpty(SingleProject.ProjectName) == false && string.IsNullOrEmpty(SingleProject.SoftwareName) == false && string.IsNullOrEmpty(SingleProject.Introduction) == false)
+                        {
+                            <div class="DivBtn3 cursor-pointer" @onclick="()=> UpdateProject(ToEditor)">
+                                <input type="button" value="3" class="NavButton cursor-pointer" />
+                                <span>תוכן</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="DivBtn3">
+                                <input type="button" value="3" class="NavButton" />
+                                <span>תוכן</span>
+                            </div>
+                        }
+                        <div class="navLine1"></div>
+                        <div class="DivBtn4">
+                            <input type="button" value="4" class="NavButton" />
+                            <span>עיצוב</span>
+                        </div>
+                    </div>
+                </div>
+            </MudItem>
+            <MudItem sm="3" md="3" lg="3" xl="2">
+                <div>
+                    <img id="Logo" src="Images/Logo.png" alt="Creator logo" />
+                </div>
+            </MudItem>
+
+            @*--------------------*@
+
+            <MudItem sm="2" md="2" lg="2" xl="2"></MudItem>
+            <MudItem sm="6" md="6" lg="6" xl="6">
+
+                <div class="H1Line">
+                    <h1>פתיח</h1>
+                </div>
+
+                <div class="SettingFormDiv">
+                    <label for="ProjectNameLBL">שם הפעולה/תהליך:</label>
+                    <MudTextField id="ProjectNameLBL" @bind-Value="@SingleProject.ProjectName" Style="font: normal 13px/22px Segoe UI; height: 37px;" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="SettingFormDiv">
+                    <label for="SoftwareNameLBL">שם התוכנה:</label>
+                    <MudTextField id="SoftwareNameLBL" @bind-Value="@SingleProject.SoftwareName" Style="font: normal 13px/22px Segoe UI; height: 37px;" Variant="Variant.Outlined"></MudTextField>
+                </div>
+                <div class="SettingFormDiv">
+                    <MudTooltip Duration="1000" Text="פתיח המשמש הקדמה לתוצר הלמידה" Placement="Placement.Top">
+                        <img src="Images/i.svg" style="margin-left: 2px;" />
+                    </MudTooltip>
+                    <label for="IntroductionLBL">פתיח:</label>
+                    <MudTextField T="string" @bind-Value="@SingleProject.Introduction" Variant="Variant.Outlined" Lines="4" Style="height: 85px; font: normal 13px/20px Segoe UI;" />
+                </div>
+            </MudItem>
+            <MudItem sm="4" md="4" lg="4" xl="4"></MudItem>
+
+            @*-------------*@
+
+            <div style="width: 100%; position:absolute; bottom:2%;">
+                <div style="display: inline-block; width: 15%;">
+                    <input type="button" class="BackBtn cursor-pointer" Value="חזור" @onclick="()=> UpdateProject(ToSettings)" />
+                </div>
+                <div style="display: inline-block; width: 68%;">
+                    <div class="LogoDivDown">
+                        <div style="margin-bottom: 5px;">
+                            <img class="LogoSize" src="Images/Clalit_Logo_Clean_2020.svg" />
+                        </div>
+                        <div>
+                            <span class="LogoTxtRight">מחלקת הטמעה בדיגיטל</span>
+                            <div class="LineClalitLogo"></div>
+                            <span class="LogoTxtLeft">חטיבת מערכות מידה ודיגיטל</span>
+                        </div>
+                    </div>
+                </div>
+                <div style=" display:inline-block; width:15%;">
+                    @if (string.IsNullOrEmpty(SingleProject.ProjectName) == false && string.IsNullOrEmpty(SingleProject.SoftwareName) == false && string.IsNullOrEmpty(SingleProject.Introduction) == false)
+                    {
+                        <div style=" margin-top: 10%; margin-bottom: -1%;  float: left;">
+                            <MudTooltip>
+                                <input type="Submit" class="NextBtn cursor-pointer" Value="המשך" />
+                            </MudTooltip>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style=" margin-top: 10%; margin-bottom: -1%; float: left;">
+                            <MudTooltip Duration="1000" Text="יש למלא את כל השדות" Placement="Placement.Top">
+                                <input type="Submit" class="NextBtnDis" Value="המשך" />
+                            </MudTooltip>
+                        </div>
+                    }
+                </div>
+            </div>
+        </MudGrid>
+    </EditForm>
+</div>
+
+
+
+
+
+@code {
+
+    Project SingleProject = new Project();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    //משתנים למעברי עמודים עם שמירה
+    string ToEditor = "Editor";
+    string ToSettings = "Settings";
+    string ToDesign = "Design";
+    string ToOpenPreview = "OpenPreview";
+
+
+    //השוואת ID
+    protected override async Task OnInitializedAsync()
+    {
+        var getResponse = await Http.GetAsync("api/Projects/" + Id);
+        if (getResponse.IsSuccessStatusCode == true)
+        {
+            SingleProject = getResponse.Content.ReadFromJsonAsync<Project>().Result;
+        }
+    }
+
+
+    //שמירה וניווט
+    private async Task UpdateProject(string pageName)
+    {
+        var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            navigat.NavigateTo("/" + pageName + "/" + SingleProject.ID);
+        }
+    }
+
+
+    //מעבר לטבלת הפרוייקטים עם שמירה
+    private async Task AllProjectsFunc()
+    {
+        var updateResponse = await Http.PostAsJsonAsync("api/Projects/Update", SingleProject);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            navigat.NavigateTo("/AllProjects");
+        }
+    }
+
+}

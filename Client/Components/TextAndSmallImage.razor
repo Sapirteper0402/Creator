@@ -1,0 +1,310 @@
+﻿@using FinalProject_SapirTeper_OfirEinhoren.Shared.Entities
+@using FinalProject_SapirTeper_OfirEinhoren.Shared.BlocksClass
+@inject HttpClient Http
+@using System.Text.Json
+
+<section>
+    <EditForm Model="OneBlock">
+        <div class="BigBigDivComp">
+            <div class="DivNumberComp">
+                @if (NumForNumber != 0)
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -25px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"><span style="font: normal normal 600 12pt/20px Segoe UI;">@NumForNumber.ToString().</span></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+                else
+                {
+                    <div style="width: 33px; height: 33px; position: relative; top: -25px; ">
+                        <MudTooltip Duration="1000" Text="להורדת / הוספת מספור" Placement="Placement.Top">
+                            <MudIconButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="NoneNumber" Style="width: 33px; height: 33px; color: #08A47B; font: normal normal 600 10pt/20px Segoe UI; border-radius: 8px;"> </MudIconButton>
+                        </MudTooltip>
+                    </div>
+                }
+            </div>
+            <div class="ComponentDivClass">
+                <div class="ComponentDivLineStyle">
+                    <div Style="float: left;">
+                        <MudTooltip Duration="1000" Text="מחיקת רכיב" Placement="Placement.Top">
+                            <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Primary" Size="Size.Medium" @onclick="DeleteBlock" aria-label="delete"></MudIconButton>
+                        </MudTooltip>
+                    </div>
+                    <div Style="float: left;">
+                        @if (TxtString != B.TxtAndImg_Text || myFileImage3 != B.TxtAndImg_Img)
+                        {
+                            if (Filled == 1)
+                            {
+                                ChangeToZero();
+                            }
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.Save" Color="Color.Error" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">לחצו לשמירה</span>
+                        }
+                        else
+                        {
+                            <MudTooltip Duration="1000" Text="שמירת רכיב" Placement="Placement.Top">
+                                <MudIconButton Icon="@Icons.Rounded.CheckCircleOutline" Color="Color.Success" @onclick="SaveFunc" aria-label="save"></MudIconButton>
+                            </MudTooltip>
+                            <span class="SaveSpanTxt">נשמר</span>
+                        }
+                    </div>
+                    <div class="CompDivTitle">
+                        <span class="CompTitle">טקסט + תמונה</span>
+                        <span class="CompDescription">כתבו את הטקסט הרצוי והוסיפו תמונה</span>
+                    </div>
+
+                    <div style="margin: 1% 4%; display: flex;">
+                        <MudTextField id="TxtAndImg_Text" T="string" @bind-Value="@B.TxtAndImg_Text" Variant="Variant.Outlined" Lines="3" Label="כתבו את הטקסט  הרצוי כאן" Style=" width: 100%; display: inline-block; font: normal 13px/22px Segoe UI; height: 50px;" />
+
+                        <div style="width: 20%; margin-right: 1.5%; margin-top: -0.5%; display: inline-flex; ">
+                            <MudButton Style="display: inline-flex;
+                                    width: 90%;
+                                    height: 50px;
+                                    justify-content: space-around;
+                                    border-radius: 16px;
+                                    color: #676767;
+                                    border: 0.8px solid #C5C5C5;
+                                    cursor: pointer;
+                                    align-items: center;
+                                    padding: 16px;
+                                    font: normal normal normal 14px/8px Segoe UI;
+                                    background: white;
+                                    box-shadow: 0px 0px 1px 0px #444444;"
+                                       Class="ma-2" Variant="Variant.Filled" for="@FileInputID" HtmlTag="label">
+
+                                @if (string.IsNullOrEmpty(myFileImage3))
+                                {
+                                    <MudIcon Icon="@Icons.Rounded.AddPhotoAlternate" Size="Size.Medium" Title="העלאת תמונה" />
+                                }
+                                else
+                                {
+                                    <img src="@myFileImage3" width="70" />
+                                }
+                            </MudButton>
+
+                            @if (string.IsNullOrEmpty(myFileImage3) == false)
+                            {
+                                <div style="padding-top: 7%; margin-right: -1%;">
+                                    <div>
+                                        <MudTooltip Duration="1000" Text="החלפת תמונה" Placement="Placement.Left">
+                                            <MudIconButton Icon="@Icons.Rounded.Edit" Size="Size.Small" for="@FileInputID" HtmlTag="label" aria-label="edit"></MudIconButton>
+                                        </MudTooltip>
+                                    </div>
+                                    <div Style="display: inline-flex;">
+                                        <MudTooltip Duration="1000" Text="מחיקת תמונה" Placement="Placement.Left">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" aria-label="delete" @onclick="DeleteImage"></MudIconButton>
+                                        </MudTooltip>
+                                    </div>
+                                </div>
+                            }
+                            <InputFile id="@FileInputID" OnChange="UploadFile3" hidden />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</section>
+
+
+@code{
+
+    TextAndSmallImageBlock B = new TextAndSmallImageBlock();
+
+    [Parameter]
+    public Block OneBlock { get; set; }
+
+    string TxtString;
+
+    //פרמטרים למחיקת הרכיב
+    [Parameter]
+    public int IDNum { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumberParamChanged { get; set; }
+
+    //פרמטרים למספור
+    [Parameter]
+    public int NumForNumber { get; set; }
+
+    [Parameter]
+    public EventCallback<int> NumChanged { get; set; }
+
+
+    //פרמטרים לכפתור שמירה
+    [Parameter]
+    public int Filled { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledPlus { get; set; }
+
+    [Parameter]
+    public EventCallback<int> UpdateFilledMinus { get; set; }
+
+
+    //פרמטרים לשמירת תמונה
+    string myFileImage3;
+    long maxFileSize = 4194304;
+    string FileInputID;
+
+    //רשימה למחיקת תמונה
+    List<string> DeletedImages = new List<string>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OneBlock.BlockContent != string.Empty)
+        {
+            B = JsonSerializer.Deserialize<TextAndSmallImageBlock>(OneBlock.BlockContent);
+            myFileImage3 = B.TxtAndImg_Img;
+            TxtString = B.TxtAndImg_Text;
+        }
+        FileInputID = "FileInput" + OneBlock.ID;
+    }
+
+
+    //העלאת תמונה
+    private async Task UploadFile3(InputFileChangeEventArgs e)
+    {
+        var imageFiles = e.GetMultipleFiles();
+        foreach (var file in imageFiles)
+        {
+            if (file.Size <= maxFileSize)
+            {
+                var buffer = new byte[file.Size];
+                await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
+                var imageBase64 = Convert.ToBase64String(buffer);
+
+                string resizeUrl = "";
+                if (string.IsNullOrEmpty(myFileImage3))
+                {
+                    var saveResponse = await Http.PostAsJsonAsync("api/Blocks/upload", imageBase64);
+                    if (saveResponse.IsSuccessStatusCode == true)
+                    {
+                        resizeUrl = saveResponse.Content.ReadAsStringAsync().Result;
+                    }
+                }
+                else
+                {
+                    List<string> strings = new List<string>()
+            {
+                        imageBase64, myFileImage3
+                    };
+                    var saveResponse = await Http.PostAsJsonAsync("api/Blocks/updateImage", strings);
+                    if (saveResponse.IsSuccessStatusCode == true)
+                    {
+                        resizeUrl = saveResponse.Content.ReadAsStringAsync().Result;
+                    }
+                }
+                myFileImage3 = resizeUrl;
+            }
+        }
+    }
+
+
+    //מחיקת תמונה
+    private async Task DeleteImage()
+    {
+        var saveResponse = await Http.PostAsJsonAsync("api/Blocks/deleteImages", myFileImage3);
+
+        if (saveResponse.IsSuccessStatusCode == true)
+        {
+            myFileImage3 = "";
+        }
+    }
+
+
+    //מחיקת רכיב
+    private async Task DeleteBlock()
+    {
+        var deleteResponse = await Http.DeleteAsync("api/Blocks/" + OneBlock.ID);
+        bool isDeleted = deleteResponse.Content.ReadFromJsonAsync<bool>().Result;
+
+        if (isDeleted == true && deleteResponse.IsSuccessStatusCode == true)
+        {
+            sendIDToDelete();
+        }
+
+        //איפוס המחלקה
+        if (OneBlock.BlockContent != string.Empty)
+        {
+            B = JsonSerializer.Deserialize<TextAndSmallImageBlock>(OneBlock.BlockContent);
+            myFileImage3 = B.TxtAndImg_Img;
+            TxtString = B.TxtAndImg_Text;
+        }
+        FileInputID = "FileInput" + OneBlock.ID;
+
+    }
+
+    private void sendIDToDelete()
+    {
+        IDNum = OneBlock.ID;
+        NumberParamChanged.InvokeAsync(IDNum);
+    }
+
+
+    //שמירה
+    private async Task SaveFunc()
+    {
+        await Task.Yield();
+        OneBlock.Number = NumForNumber;
+
+        TxtString = B.TxtAndImg_Text;
+        B.TxtAndImg_Img = myFileImage3;
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+
+        if (string.IsNullOrEmpty(TxtString) == false && string.IsNullOrEmpty(myFileImage3) == false)
+        {
+            OneBlock.ToContinue = 1;
+        }
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            if (string.IsNullOrEmpty(TxtString) == false && string.IsNullOrEmpty(myFileImage3) == false)
+            {
+                Filled = 1;
+                UpdateFilledPlus.InvokeAsync(Filled);
+            }
+        }
+    }
+
+
+    //שינוי הערך בכפתור המשך לאפס
+    private async Task ChangeToZero()
+    {
+        OneBlock.ToContinue = 0;
+
+        var updateResponse = await Http.PostAsJsonAsync("api/Blocks/Update", OneBlock);
+        if (updateResponse.IsSuccessStatusCode == true)
+        {
+            Filled = 0;
+            UpdateFilledMinus.InvokeAsync(Filled);
+        }
+    }
+
+
+    //הוספת ומחיקת מיספור
+    private async Task NoneNumber()
+    {
+        await Task.Yield();
+
+        if (NumForNumber != 0)
+        {
+            NumForNumber = 0;
+        }
+        else
+        {
+            NumForNumber = 1;
+        }
+
+        OneBlock.Number = NumForNumber;
+        OneBlock.BlockContent = JsonSerializer.Serialize(B);
+        SaveFunc();
+        NumChanged.InvokeAsync(NumForNumber);
+    }
+
+}
